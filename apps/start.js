@@ -13,7 +13,8 @@ export class Start extends plugin {
       priority: 5000,
       rule: [{
         reg: '',
-        fnc: 'rcon'
+        fnc: 'rcon',
+        log: false
       }]
     })
 

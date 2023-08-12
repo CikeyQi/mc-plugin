@@ -32,7 +32,7 @@ _🎉 基于 Yunzai-Bot 的与Minecraft Server互通消息的插件 🎉_
 </p>
 
 <p align="center">
-  <a href="https://gitee.com/CikeyQi/mj-plugin">项目地址</a>
+  <a href="https://gitee.com/CikeyQi/mc-plugin">项目地址</a>
   ·
   <a href="#安装插件">开始使用</a>
   ·

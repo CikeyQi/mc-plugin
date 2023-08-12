@@ -12,21 +12,27 @@ class RconConnect {
 
     async sendCommand(e, command) {
         if (!RconClient) {
-            await RconInit();
+            await this.RconInit();
             if (!RconClient) {
-                e.reply('[MC_QQ]丨Rcon连接失败，请检查控制台输出');
-                return false;
+                e.reply('[QQ_MC]丨Rcon连接失败，请检查控制台输出');
+                return true;
             }
         }
 
+        Log.i('[QQ_MC]丨Rcon发送命令：' + command);
+
         try {
             RconClient.send(command);
+
+            RconClient.removeAllListeners('response');
+
             RconClient.on('response', str => {
+                Log.i('[QQ_MC]丨Rcon返回：' + str);
                 e.reply(str, true);
                 return true;
             });
         } catch (error) {
-            e.reply('[MC_QQ]丨Rcon发送失败，请检查控制台输出');
+            e.reply('[QQ_MC]丨Rcon发送失败，请检查控制台输出');
             Log.e(error);
             return false;
         }
@@ -42,6 +48,10 @@ class RconConnect {
             );
 
             RconClient.connect();
+
+            RconClient.on('auth', () => {
+                Log.i('[QQ_MC]丨Rcon 已连接至 Minecraft Server');
+            });
 
         } catch (error) {
             Log.e(error);

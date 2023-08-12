@@ -4,7 +4,7 @@ import RconConnect from '../components/Rcon.js'
 import Config from '../components/Config.js'
 
 
-export class Start extends plugin {
+export class Main extends plugin {
   constructor() {
     super({
       name: 'QQ_MC',
@@ -13,17 +13,17 @@ export class Start extends plugin {
       priority: 5000,
       rule: [{
         reg: '',
-        fnc: 'rcon',
+        fnc: 'main',
         log: false
       }]
     })
 
   }
 
-  async rcon(e) {
+  async main(e) {
     if (e.raw_message.startsWith('/')) {
-      let shell = e.e.raw_message.replace(/^\//, '')
-      await RconConnect.sendCommand(e, shell)
+      let shell = e.raw_message.replace(/^\//, '')
+      RconConnect.sendCommand(e, shell)
     } else {
       const config = await Config.getConfig()
       if (config.group_list.includes(e.group_id)) {
@@ -33,9 +33,9 @@ export class Start extends plugin {
         } else {
           shell = `say (${e.sender.nickname}) ${e.raw_message}`
         }
-        await RconConnect.sendCommand(e, shell)
+        RconConnect.sendCommand(e, shell)
       }
     }
-    return true
+    return false
   }
 }

@@ -11,6 +11,14 @@ class RconConnect {
     }
 
     async sendCommand(e, command) {
+
+        const config = await Config.getConfig();
+
+        if (config.rcon_enable !== true) {
+            Log.i('[QQ_MC]丨Rcon未启用');
+            return true;
+        }
+
         if (!RconClient) {
             await this.RconInit();
             if (!RconClient) {
@@ -39,6 +47,12 @@ class RconConnect {
     }
     async RconInit() {
         const config = await Config.getConfig();
+
+        if (config.rcon_enable !== true) {
+            Log.i('[QQ_MC]丨Rcon未启用');
+            return false;
+        }
+
         try {
             Init.initConfig();
             RconClient = new Rcon(

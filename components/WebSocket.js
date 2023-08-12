@@ -19,6 +19,14 @@ class WebSocket {
 
       wsServer.on('listening', () => {
         Log.i(`[MC_QQ]丨WebSocket 服务器已启动，等待连接`);
+        logger.info('---------------')
+        logger.mark(
+          logger.green(
+            'Minecraft WebSocket 地址：' + logger.yellow(`ws://127.0.0.1:${config.mc_qq_ws_port}${config.mc_qq_ws_url}`)
+          )
+        )
+        logger.info('---------------')
+
       });
 
         wsServer.on('connection', (ws) => {

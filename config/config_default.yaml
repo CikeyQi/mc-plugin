@@ -1,0 +1,8 @@
+mc_qq_ws_url: /yz/v3/mcqq
+mc_qq_ws_port: 9090
+mc_qq_send_group_name: false
+rcon_enable: false
+rcon_host: '127.0.0.1'
+rcon_port: 25575
+rcon_password: 'password'
+group_list: []

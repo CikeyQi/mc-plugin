@@ -75,8 +75,7 @@ pnpm restart
 
 # 文档
 
-- [原插件文档](https://17theword.github.io/mc_qq/)
-- 本插件文档正在制作中，请先参考原插件文档
+- [插件Wiki](https://github.com/CikeyQi/mc-plugin/wiki)
 
 <br>
 

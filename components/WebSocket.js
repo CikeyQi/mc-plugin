@@ -29,7 +29,8 @@ class WebSocket {
 
       });
 
-        wsServer.on('connection', (ws) => {
+        wsServer.on('connection', (ws, request) => {
+          const serverName = JSON.parse(`"${request.headers['x-self-name']}"`);
           Log.i('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
           this.sendMsg('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
           this.wsHandler(ws);

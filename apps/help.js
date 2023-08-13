@@ -80,6 +80,16 @@ export class help extends plugin {
                         "title": "#mc设置(开启|关闭)同步",
                         "desc": "控制本群消息与服务器消息同步"
                     }
+                ],
+            },
+            {
+                "group": "MC查询",
+                "list": [
+                    {
+                        "icon": 62,
+                        "title": "#mc状态",
+                        "desc": "查询服务器状态"
+                    },
                 ]
             }
         ]

@@ -77,7 +77,7 @@ class WebSocket {
     }
 
     sendMsg(msg) {
-      let config = await Config.getConfig();
+      let config = Config.getConfig();
       for (let i = 0; i < config.group_list.length; i++) {
         Bot.pickGroup(config.group_list[i]).sendMsg(msg);
       }

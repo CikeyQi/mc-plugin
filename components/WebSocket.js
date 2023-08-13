@@ -29,9 +29,12 @@ class WebSocket {
 
       });
 
-        wsServer.on('connection', (ws) => {
+        wsServer.on('connection', (ws,req) => {
+          ws.server_name = req.headers['x-self-name'].replace(/\\u([0-9a-fA-F]{4})/g, function (match,character){
+            return String.fromCharCode(parseInt(character, 16));
+          })
           Log.i('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
-          this.sendMsg('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
+          this.sendMsg(`[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器[${ws.server_name}]`);
           this.wsHandler(ws);
         });
       } catch (error) {
@@ -52,22 +55,22 @@ class WebSocket {
         }
         switch (event.event_name) {
           case 'PlayerQuitEvent':
-            this.sendMsg(`${event.player.nickname} 已退出游戏`);
+            this.sendMsg(`[${ws.server_name}]${event.player.nickname} 已退出游戏`);
             break;
           case 'PlayerJoinEvent':
-            this.sendMsg(`${event.player.nickname} 已加入游戏`);
+            this.sendMsg(`[${ws.server_name}]${event.player.nickname} 已加入游戏`);
             break;
           case 'PlayerDeathEvent':
-            this.sendMsg(`${event.player.nickname} ${event.death_message}`);
+            this.sendMsg(`[${ws.server_name}]${event.player.nickname} ${event.death_message}`);
             break;
           case 'AsyncPlayerChatEvent':
-            this.sendMsg(`${event.player.nickname} 说 ${event.message}`);
+            this.sendMsg(`[${ws.server_name}]${event.player.nickname} 说 ${event.message}`);
             break;
         }
       });
 
       ws.on('close', () => {
-        this.sendMsg('[MC_QQ]丨Minecraft Server 已断开 WebSocket 服务器');
+        this.sendMsg(`[MC_QQ]丨Minecraft Server 已断开 WebSocket 服务器[${ws.server_name}]`);
       });
 
       ws.on('error', (error) => {

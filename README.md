@@ -34,9 +34,9 @@ _🎉 基于 Yunzai-Bot 的与Minecraft Server互通消息的插件 🎉_
 <p align="center">
   <a href="https://github.com/CikeyQi/mc-plugin">项目地址</a>
   ·
-  <a href="#安装插件">开始使用</a>
+  <a href="#安装">开始使用</a>
   ·
-  <a href="#配置接口">配置接口</a>
+  <a href="#文档">配置文档</a>
 </p>
 
 <br>

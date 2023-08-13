@@ -67,6 +67,9 @@ class RconConnect {
                 Log.i('[QQ_MC]丨Rcon 已连接至 Minecraft Server');
             });
 
+            RconClient.on('error', (error) => {
+                Log.e(error);
+            });
         } catch (error) {
             Log.e(error);
             return false;

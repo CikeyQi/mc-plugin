@@ -32,7 +32,7 @@ class Init {
         delete config_yaml[key]
       }
     }
-    Config.setSetting(config_yaml)
+    Config.setConfig(config_yaml)
   }
 }
 

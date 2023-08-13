@@ -21,12 +21,12 @@ export class Main extends plugin {
   }
 
   async main(e) {
-    if (e.raw_message.startsWith('/')) {
+    if (e.raw_message.startsWith('/') && e.isMaster) {
       let shell = e.raw_message.replace(/^\//, '')
       RconConnect.sendCommand(e, shell)
     } else {
       const config = await Config.getConfig()
-      if (config.group_list.includes(e.group_id)) {
+      if (e.isGroup && config.group_list.includes(e.group_id)) {
         let shell = ''
         if (config.mc_qq_send_group_name) {
           shell = `say [${e.group_name}](${e.sender.nickname}) ${e.raw_message}`

@@ -1,5 +1,5 @@
 import fs from 'fs'
-import Config from '../components/Config'
+import Config from '../components/Config.js'
 import { pluginRoot } from '../model/path.js'
 import Log from '../utils/logs.js'
 

@@ -22,20 +22,25 @@ export class Main extends plugin {
 
   async main(e) {
     if (e.raw_message.startsWith('/') && e.isMaster) {
-      let shell = e.raw_message.replace(/^\//, '')
-      RconConnect.sendCommand(e, shell)
-    } else {
-      const config = await Config.getConfig()
-      if (e.isGroup && config.group_list.includes(e.group_id)) {
-        let shell = ''
-        if (config.mc_qq_send_group_name) {
-          shell = `say [${e.group_name}](${e.sender.nickname}) ${e.raw_message}`
-        } else {
-          shell = `say (${e.sender.nickname}) ${e.raw_message}`
-        }
-        RconConnect.sendCommand(e, shell)
-      }
+      const shell = e.raw_message.replace(/^\//, '');
+      RconConnect.sendCommand(e, shell);
+      return false;
     }
-    return false
+  
+    const config = await Config.getConfig();
+    if (e.isGroup && config.group_list.includes(e.group_id)) {
+      let shell = '';
+      const groupPrefix = config.mc_qq_send_group_name ? `[${e.group_name}](${e.sender.nickname}) ` : `(${e.sender.nickname}) `;
+  
+      if (e.img) {
+        shell = `tellraw @a {"rawtext":[{"text":"${groupPrefix}"},{"text":"${e.raw_message}","color":"white","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
+      } else {
+        shell = `say ${groupPrefix}${e.raw_message}`;
+      }
+  
+      RconConnect.sendCommand(e, shell);
+    }
+  
+    return false;
   }
 }

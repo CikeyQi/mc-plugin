@@ -33,7 +33,7 @@ export class Main extends plugin {
       const groupPrefix = config.mc_qq_send_group_name ? `[${e.group_name}](${e.sender.nickname}) ` : `(${e.sender.nickname}) `;
   
       if (e.img) {
-        shell = `tellraw @a {"rawtext":[{"text":"${groupPrefix}"},{"text":"${e.raw_message}","color":"white","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
+        shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}${e.raw_message}","color":"white","bold":"true","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
       } else {
         shell = `say ${groupPrefix}${e.raw_message}`;
       }

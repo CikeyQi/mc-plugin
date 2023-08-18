@@ -23,7 +23,7 @@ export class Main extends plugin {
   async main(e) {
     if (e.raw_message.startsWith('/') && e.isMaster) {
       const shell = e.raw_message.replace(/^\//, '');
-      RconConnect.sendCommand(e, shell);
+      RconConnect.sendCommand(e, shell, true);
       return false;
     }
   
@@ -38,7 +38,7 @@ export class Main extends plugin {
         shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}${e.raw_message}","color":"white","bold":"false"}]}`;
       }
   
-      RconConnect.sendCommand(e, shell);
+      RconConnect.sendCommand(e, shell, false);
     }
   
     return false;

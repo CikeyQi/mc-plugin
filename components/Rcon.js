@@ -10,7 +10,7 @@ class RconConnect {
         this.RconInit();
     }
 
-    async sendCommand(e, command) {
+    async sendCommand(e, command, isCommand) {
 
         const config = await Config.getConfig();
 
@@ -35,8 +35,10 @@ class RconConnect {
             RconClient.removeAllListeners('response');
 
             RconClient.on('response', str => {
-                Log.i('[QQ_MC]丨Rcon返回：' + str);
-                e.reply(str, true);
+                if (isCommand) {
+                    Log.i('[QQ_MC]丨Rcon返回：' + str);
+                    e.reply(str, true);
+                }
                 return true;
             });
         } catch (error) {

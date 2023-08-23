@@ -51,17 +51,17 @@ class WebSocket {
         } else {
           event = JSON.parse(message);
         }
-        switch (event.event_name) {
-          case 'PlayerQuitEvent':
+        switch (event.sub_type) {
+          case 'quit':
             this.sendMsg(`${event.player.nickname} 已退出游戏`);
             break;
-          case 'PlayerJoinEvent':
+          case 'join':
             this.sendMsg(`${event.player.nickname} 已加入游戏`);
             break;
-          case 'PlayerDeathEvent':
+          case 'death':
             this.sendMsg(`${event.player.nickname} ${event.death_message}`);
             break;
-          case 'AsyncPlayerChatEvent':
+          case 'chat':
             this.sendMsg(`${event.player.nickname} 说 ${event.message}`);
             break;
         }

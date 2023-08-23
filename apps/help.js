@@ -76,9 +76,14 @@ export class help extends plugin {
                         "desc": "服务器中群名显示开启或关闭"
                     },
                     {
-                        "icon": 3,
+                        "icon": 38,
                         "title": "#mc设置(开启|关闭)同步",
                         "desc": "控制本群消息与服务器消息同步"
+                    },
+                    {
+                        "icon": 36,
+                        "title": "#mc设置命令响应头",
+                        "desc": "自定义响MC命令应头'/','~'"
                     }
                 ],
             },

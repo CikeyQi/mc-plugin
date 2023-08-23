@@ -21,19 +21,19 @@ export class Main extends plugin {
   }
 
   async main(e) {
-    if (e.raw_message.startsWith('/') && e.isMaster) {
-      const shell = e.raw_message.replace(/^\//, '');
+    const config = await Config.getConfig();
+    if (e.raw_message.startsWith(config.command_header) && e.isMaster) {
+      const shell = e.raw_message.replace(new RegExp(config.command_header, 'g'), '');
       RconConnect.sendCommand(e, shell, true);
       return false;
     }
   
-    const config = await Config.getConfig();
     if (e.isGroup && config.group_list.includes(e.group_id)) {
       let shell = '';
       const groupPrefix = config.mc_qq_send_group_name ? `[${e.group_name}](${e.sender.nickname}) ` : `(${e.sender.nickname}) `;
   
       if (e.img) {
-        shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}${e.raw_message}","color":"white","bold":"false","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
+        shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}§2${e.raw_message}","color":"white","bold":"false","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
       } else {
         shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}${e.raw_message}","color":"white","bold":"false"}]}`;
       }

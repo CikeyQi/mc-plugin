@@ -58,7 +58,6 @@ export class Setting extends plugin {
         }
         break
       case 'rcon地址':
-        Log.e(value)
         if (!/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)) {
           e.reply('请输入正确的ip地址,格式为\n#mc设置rcon地址127.0.0.1', true)
           return true
@@ -87,14 +86,14 @@ export class Setting extends plugin {
         break
       case '同步':
         // 如果值存在,找到该值的索引
-        const index = config['group_list'].indexOf(Number(e.group_id))
+        const index = config['group_list'].indexOf(e.group_id)
         if (value.match(/(开启|关闭)/)) {
           if (value === '开启') {
             if (index > -1) {
               e.reply(`${e.group.name}(${e.group_id})群与服务器消息同步已开启`, true)
               return true
             } else {
-              config['group_list'].push(Number(e.group_id))
+              config['group_list'].push(e.group_id)
               alterFlag = true
             }
           } else if (value === '关闭') {

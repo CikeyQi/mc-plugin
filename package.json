@@ -10,7 +10,8 @@
   "module": "index.js",
   "dependencies": {
     "ws": "^8.13.0",
-    "rcon": "^1.1.0"
+    "rcon": "^1.1.0",
+    "iconv-lite": "0.6.3"
   },
   "keywords": [
     "Yunzai-Bot",

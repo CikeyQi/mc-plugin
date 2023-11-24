@@ -84,6 +84,11 @@ export class help extends plugin {
                         "icon": 36,
                         "title": "#mc设置命令响应头",
                         "desc": "自定义响MC命令应头'/','~'"
+                    },
+                    {
+                        "icon": 40,
+                        "title": "#mc设置乱码修复",
+                        "desc": "消息乱码时可尝试开启此功能"
                     }
                 ],
             },

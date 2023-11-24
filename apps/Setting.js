@@ -23,7 +23,7 @@ export class Setting extends plugin {
     Init.initConfig()
     // 读取配置项
     var config = Config.getConfig()
-    const keyParam = /((ws|rcon)(路由|端口|状态|地址|密码)|群名显示|同步|命令响应头)/g.exec(e.msg)
+    const keyParam = /((ws|rcon)(路由|端口|状态|地址|密码)|群名显示|同步|命令响应头|乱码修复)/g.exec(e.msg)
     const key = keyParam ? keyParam[1] : ''
     let value = e.msg.replace(/#?mc设置/, '').replace(new RegExp(`${key}`), '').trim()
     // key匹配失败,value存在时
@@ -113,6 +113,16 @@ export class Setting extends plugin {
           alterFlag = true
         }
         break
+      case '乱码修复':
+        if (value.match(/(开启|关闭)/)) {
+          if (value === '开启') {
+            config.is_garbled = true
+          } else if (value === '关闭') {
+            config.is_garbled = false
+          }
+          alterFlag = true
+          }
+        break
       default:
         // 如果key为空且value为空则展示
         let str = [
@@ -125,7 +135,8 @@ export class Setting extends plugin {
           'rcon密码：' + config.rcon_password + '\n' +
           '发送群名称：' + (config.mc_qq_send_group_name ? '是' : '否') + '\n' +
           '消息同步群：' + config.group_list + '\n' +
-          '命令响应头: ' + config.command_header
+          '命令响应头: ' + config.command_header + '\n' +
+          '乱码修复：' + (config.is_garbled ? '是' : '否')
         ]
         e.reply(str, true)
         return true
@@ -135,7 +146,7 @@ export class Setting extends plugin {
         await Config.setConfig(config)
         let msg = [
           key.match(/(路由|端口|地址|密码|命令响应头)/) ? `设置项${key}已修改为${value}`
-            : key === '群名显示' || key === 'rcon状态' ? `设置项${key}已${value}`
+            : key.match(/(群名显示|rcon状态|乱码修复)/) ? `设置项${key}已${value}`
               : key === '同步' ? `${e.group.name}(${e.group_id})与服务器消息同步已${value}`
                 : "???"
         ]

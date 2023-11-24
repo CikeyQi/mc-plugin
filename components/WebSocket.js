@@ -2,6 +2,7 @@ import { WebSocketServer } from 'ws';
 import Config from './Config.js';
 import Init from '../model/init.js';
 import Log from '../utils/logs.js';
+import iconv from 'iconv-lite'
 
 class WebSocket {
   constructor() {
@@ -62,7 +63,13 @@ class WebSocket {
             this.sendMsg(`${event.player.nickname} ${event.death_message}`);
             break;
           case 'chat':
-            this.sendMsg(`${event.player.nickname} 说 ${event.message}`);
+            let config = Config.getConfig();
+            let msg = event.message
+            if (config.is_garbled) {
+              let gbkBuffer = iconv.encode(event.message, 'GBK')
+              msg = iconv.decode(gbkBuffer, 'utf-8')
+            }
+            this.sendMsg(`${event.player.nickname} 说 ${msg}`);
             break;
         }
       });
@@ -79,6 +86,7 @@ class WebSocket {
 
     sendMsg(msg) {
       let config = Config.getConfig();
+      Log.i(`接收到服务器消息${msg}`)
       for (let i = 0; i < config.group_list.length; i++) {
         Bot.pickGroup(config.group_list[i]).sendMsg(msg);
       }

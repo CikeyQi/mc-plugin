@@ -51,7 +51,7 @@ cd Yunzai-Bot
 - 使用 Gitee（国内服务器推荐使用此方法）
 
 ```
-git clone https://gitee.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
+git clone https://mirror.ghproxy.com/https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
 ```
 
 - 使用 Github

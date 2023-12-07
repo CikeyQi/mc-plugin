@@ -48,7 +48,7 @@ cd Yunzai-Bot
 
 #### 2. 克隆本仓库至 plugins 目录
 
-- 使用 Gitee（国内服务器推荐使用此方法）
+- 使用 Ghproxy（国内服务器推荐使用此方法）
 
 ```
 git clone https://mirror.ghproxy.com/https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin

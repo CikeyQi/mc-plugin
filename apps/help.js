@@ -89,7 +89,12 @@ export class help extends plugin {
                         "icon": 40,
                         "title": "#mc设置乱码修复",
                         "desc": "消息乱码时可尝试开启此功能"
-                    }
+                    },
+                    {
+                        "icon": 85,
+                        "title": "#mc设置屏蔽词",
+                        "desc": "添加自定义屏蔽词，可使用正则表达式"
+                    },
                 ],
             },
             {

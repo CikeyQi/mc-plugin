@@ -93,7 +93,7 @@ export class help extends plugin {
                     {
                         "icon": 85,
                         "title": "#mc设置屏蔽词",
-                        "desc": "添加自定义屏蔽词，可使用正则表达式"
+                        "desc": "使用正则表达式添加屏蔽词"
                     },
                 ],
             },

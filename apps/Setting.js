@@ -124,8 +124,13 @@ export class Setting extends plugin {
           }
         break
       case '屏蔽词':
-        config.mask_word = value
-        alterFlag = true
+        if (value.match('^/.*(/g)$')) {
+          config.mask_word = value
+          alterFlag = true
+        } else {
+          e.reply('请输入正确的正则表达式,格式为\n#mc设置屏蔽词/re/g', true)
+          return true
+        }
         break
       default:
         // 如果key为空且value为空则展示

@@ -34,10 +34,11 @@ class RconConnect {
 
             RconClient.removeAllListeners('response');
 
-            RconClient.on('response', str => {
+            RconClient.on('response', async str => {
                 if (isCommand) {
+                    const config = await Config.getConfig();
                     Log.i('[QQ_MC]丨Rcon返回：' + str);
-                    str = str.replace(eval(Config.mask_word),'');   //过滤屏蔽词
+                    str = str.replace(eval(config.mask_word),'');   //过滤屏蔽词
                     e.reply(str, true);
                 }
                 return true;

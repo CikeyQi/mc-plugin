@@ -128,7 +128,7 @@ export class Setting extends plugin {
           config.mask_word = value
           alterFlag = true
         } else {
-          e.reply('请输入正确的正则表达式,格式为\n#mc设置屏蔽词/re/g', true)
+          e.reply('请输入正确的正则表达式,格式为\n#mc设置屏蔽词/§./g', true)
           return true
         }
         break

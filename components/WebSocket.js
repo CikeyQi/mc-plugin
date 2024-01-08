@@ -87,7 +87,7 @@ class WebSocket {
     sendMsg(msg) {
       let config = Config.getConfig();
       Log.i(`接收到服务器消息${msg}`)
-      msg = msg.replace(eval(Config.mask_word),'');   //过滤屏蔽词
+      msg = msg.replace(eval(config.mask_word),'');   //过滤屏蔽词
       for (let i = 0; i < config.group_list.length; i++) {
         Bot.pickGroup(config.group_list[i]).sendMsg(msg);
       }

@@ -1,11 +1,7 @@
-mc_qq_ws_url: /yz/v3/mcqq
-mc_qq_ws_port: 9090
+mc_qq_ws_url: /minecraft/ws
+mc_qq_ws_port: 8080
 mc_qq_send_group_name: false
-rcon_enable: false
-rcon_host: '127.0.0.1'
-rcon_port: 25575
-rcon_password: 'password'
-group_list: []
-command_header: /
-is_garbled: false
-mask_word: '/§./g'
+mc_qq_display_server_name: false
+max_attempts: 3
+debug_mode: true
+mc_qq_server_list: []

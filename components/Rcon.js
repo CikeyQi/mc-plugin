@@ -1,83 +1,70 @@
-import Rcon from 'rcon';
+import { Rcon } from 'rcon-client';
 import Config from './Config.js';
 import Init from '../model/init.js';
-import Log from '../utils/logs.js';
 
-let RconClient = null;
-
-class RconConnect {
+class RconClient {
     constructor() {
-        this.RconInit();
+        this.servers = {};
+        this.initRconClient();
     }
 
-    async sendCommand(e, command, isCommand) {
-
-        const config = await Config.getConfig();
-
-        if (config.rcon_enable !== true) {
-            Log.i('[QQ_MC]丨Rcon未启用');
-            return true;
-        }
-
-        if (!RconClient) {
-            await this.RconInit();
-            if (!RconClient) {
-                e.reply('[QQ_MC]丨Rcon连接失败，请检查控制台输出');
-                return true;
-            }
-        }
-
-        Log.i('[QQ_MC]丨Rcon发送命令：' + command);
-
+    async initRconClient() {
         try {
-            RconClient.send(command);
-
-            RconClient.removeAllListeners('response');
-
-            RconClient.on('response', str => {
-                if (isCommand) {
-                    Log.i('[QQ_MC]丨Rcon返回：' + str);
-                    str = str.replace(eval(config.mask_word),'');   //过滤屏蔽词
-                    e.reply(str, true);
-                }
-                return true;
-            });
-        } catch (error) {
-            e.reply('[QQ_MC]丨Rcon发送失败，请检查控制台输出');
-            Log.e(error);
-            return false;
-        }
-    }
-    async RconInit() {
-        const config = await Config.getConfig();
-
-        if (config.rcon_enable !== true) {
-            Log.i('[QQ_MC]丨Rcon未启用');
-            return false;
-        }
-
-        try {
+            const config = await Config.getConfig();
             Init.initConfig();
-            RconClient = new Rcon(
-                config.rcon_host,
-                config.rcon_port,
-                config.rcon_password
-            );
 
-            RconClient.connect();
-
-            RconClient.on('auth', () => {
-                Log.i('[QQ_MC]丨Rcon 已连接至 Minecraft Server');
-            });
-
-            RconClient.on('error', (error) => {
-                Log.e(error);
+            config.mc_qq_server_list.forEach(serverConfig => {
+                if (serverConfig.rcon_able) {
+                    this.connectRcon(serverConfig);
+                }
             });
         } catch (error) {
-            Log.e(error);
-            return false;
+            console.error(`[Minecraft RCON Client] 初始化失败: ${error.message}`);
+        }
+    }
+
+    async connectRcon(serverConfig, attempts = 0) {
+        const rcon = new Rcon({
+            host: serverConfig.rcon_host,
+            port: serverConfig.rcon_port,
+            password: serverConfig.rcon_password
+        });
+
+        try {
+            await rcon.connect();
+            logger.mark(
+                logger.blue('[Minecraft RCON Client] ') +
+                logger.green(serverConfig.server_name) +
+                ' 连接成功'
+            )
+            this.servers[serverConfig.server_name] = rcon;
+
+            rcon.on('end', () => {
+                logger.mark(
+                    logger.blue('[Minecraft RCON Client] ') +
+                    logger.yellow(serverConfig.server_name) +
+                    ' 连接已断开，正在重连...'
+                )
+                delete this.servers[serverConfig.server_name];
+                this.connectRcon(serverConfig, attempts + 1);
+            });
+        } catch (error) {
+            logger.mark(
+                logger.blue('[Minecraft RCON Client] ') +
+                logger.red(serverConfig.server_name) +
+                ' 连接失败: ' + error.message
+            )
+            if (attempts < await Config.getConfig().max_attempts) {
+                setTimeout(() => this.connectRcon(serverConfig, attempts + 1), 5000);
+            } else {
+                logger.mark(
+                    logger.blue('[Minecraft RCON Client] ') +
+                    logger.red(serverConfig.server_name) +
+                    ' 连接失败，已达到最大重连次数'
+                )
+            }
         }
     }
 }
 
-export default new RconConnect();
+export default new RconClient();

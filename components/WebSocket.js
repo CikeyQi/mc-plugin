@@ -1,97 +1,77 @@
 import { WebSocketServer } from 'ws';
 import Config from './Config.js';
 import Init from '../model/init.js';
-import Log from '../utils/logs.js';
-import iconv from 'iconv-lite'
+import sendMsg from './SendMsg.js';
 
 class WebSocket {
-  constructor() {
-    this.WebSocket()
-  }
-
-  async WebSocket() {
-    let config = await Config.getConfig();
-    try {
-      Init.initConfig();
-      const wsServer = new WebSocketServer({
-        port: config.mc_qq_ws_port,
-        path: config.mc_qq_ws_url,
-      });
-
-      wsServer.on('listening', () => {
-        Log.i(`[MC_QQ]丨WebSocket 服务器已启动，等待连接`);
-        logger.info('---------------')
-        logger.mark(
-          logger.green(
-            'Minecraft WebSocket 地址：' + logger.yellow(`ws://127.0.0.1:${config.mc_qq_ws_port}${config.mc_qq_ws_url}`)
-          )
-        )
-        logger.info('---------------')
-
-      });
-
-        wsServer.on('connection', (ws, request) => {
-          const serverName = JSON.parse(`"${request.headers['x-self-name']}"`);
-          Log.i('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
-          this.sendMsg('[MC_QQ]丨Minecraft Server 已连接至 WebSocket 服务器');
-          this.wsHandler(ws);
-        });
-      } catch (error) {
-        this.sendMsg('[MC_QQ]丨WebSocket服务启动失败，请检查控制台输出');
-        Log.e(error);
-        return false;
-      }
+    constructor() {
+        this.initWebSocket();
+        this.connections = {}
     }
 
-  wsHandler(ws) {
-      ws.on('message', (message) => {
-        let event;
-        if (message instanceof Buffer) {
-          const decodedMessage = message.toString('utf8');
-          event = JSON.parse(decodedMessage);
-        } else {
-          event = JSON.parse(message);
+    async initWebSocket() {
+        try {
+            let config = await Config.getConfig();
+
+            Init.initConfig();
+
+            const wss = new WebSocketServer({
+                port: config.mc_qq_ws_port,
+                path: config.mc_qq_ws_url,
+            });
+
+            wss.on('listening', () => {
+                logger.mark(
+                    logger.blue('[Minecraft WebSocket]') +
+                    ' 连接地址：' +
+                    logger.green(`ws://localhost:${config.mc_qq_ws_port}${config.mc_qq_ws_url}`)
+                );
+            });
+
+            wss.on('connection', (ws, request) => {
+                const serverName = JSON.parse(`"${request.headers['x-self-name']}"`);
+                if (this.connections[serverName]) {
+                    ws.close(1000, 'Duplicate connection');
+                    logger.mark(
+                        logger.blue('[Minecraft WebSocket] ') +
+                        logger.green(serverName) +
+                        ' 尝试连接至 WebSocket 服务器，但出现同名服务器，已拒绝连接'
+                    )
+                }
+                logger.mark(
+                    logger.blue('[Minecraft WebSocket] ') +
+                    logger.green(serverName) +
+                    ' 已连接至 WebSocket 服务器'
+                );
+                this.connections[serverName] = ws;
+
+                ws.on('message', (message) => {
+                    if (config.debug_mode) {
+                        logger.mark(
+                            logger.blue('[Minecraft WebSocket] ') +
+                            logger.green(serverName) +
+                            ' 收到消息：' + message
+                        );
+                    }
+                    sendMsg(message)
+                });
+
+                ws.on('close', () => {
+                    logger.mark(
+                        logger.blue('[Minecraft WebSocket] ') +
+                        logger.yellow(serverName) +
+                        ' 已断开与 WebSocket 服务器的连接'
+                    );
+
+                    delete this.connections[serverName];
+                });
+            });
+
+        } catch (error) {
+            logger.error(error);
+            throw error;
         }
-        switch (event.sub_type) {
-          case 'quit':
-            this.sendMsg(`${event.player.nickname} 已退出游戏`);
-            break;
-          case 'join':
-            this.sendMsg(`${event.player.nickname} 已加入游戏`);
-            break;
-          case 'death':
-            this.sendMsg(`${event.player.nickname} ${event.death_message}`);
-            break;
-          case 'chat':
-            let config = Config.getConfig();
-            let msg = event.message
-            if (config.is_garbled) {
-              let gbkBuffer = iconv.encode(event.message, 'GBK')
-              msg = iconv.decode(gbkBuffer, 'utf-8')
-            }
-            this.sendMsg(`${event.player.nickname} 说 ${msg}`);
-            break;
-        }
-      });
-
-      ws.on('close', () => {
-        this.sendMsg('[MC_QQ]丨Minecraft Server 已断开 WebSocket 服务器');
-      });
-
-      ws.on('error', (error) => {
-        this.sendMsg('[MC_QQ]丨Minecraft Server WebSocket 通信出现异常：' + error);
-        Log.e(error);
-      });
     }
-
-    sendMsg(msg) {
-      let config = Config.getConfig();
-      Log.i(`接收到服务器消息${msg}`)
-      msg = msg.replace(eval(config.mask_word),'');   //过滤屏蔽词
-      for (let i = 0; i < config.group_list.length; i++) {
-        Bot.pickGroup(config.group_list[i]).sendMsg(msg);
-      }
-    }
-  }
+}
 
 export default new WebSocket();

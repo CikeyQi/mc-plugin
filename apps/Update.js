@@ -12,15 +12,15 @@ let uping = false
 /**
  * 处理插件更新
  */
-export class update extends plugin {
+export class Update extends plugin {
   constructor () {
     super({
-      name: 'QQ_MC',
+      name: 'MC_QQ-更新插件',
       event: 'message',
-      priority: 5000,
+      priority: 1009,
       rule: [
         {
-          reg: '^#(m|M)(c|C)(插件)?(强制)?更新$',
+          reg: '^#mc((插件)?(强制)?更新| update)$',
           fnc: 'update'
         }
       ]
@@ -28,7 +28,7 @@ export class update extends plugin {
   }
 
   /**
-   * rule - 更新mc
+   * rule - 更新插件
    * @returns
    */
   async update () {
@@ -184,13 +184,13 @@ export class update extends plugin {
    * @returns
    */
   async makeForwardMsg (title, msg, end) {
-    let nickname = Bot.nickname
+    let nickname = (this.e.bot ?? Bot).nickname
     if (this.e.isGroup) {
-      const info = await Bot.getGroupMemberInfo(this.e.group_id, Bot.uin)
+      let info = await (this.e.bot ?? Bot).getGroupMemberInfo(this.e.group_id, (this.e.bot ?? Bot).uin)
       nickname = info.card || info.nickname
     }
-    const userInfo = {
-      user_id: Bot.uin,
+    let userInfo = {
+      user_id: (this.e.bot ?? Bot).uin,
       nickname
     }
 
@@ -213,17 +213,27 @@ export class update extends plugin {
     }
 
     /** 制作转发内容 */
-    if (this.e.isGroup) {
+    if (this.e.group?.makeForwardMsg) {
       forwardMsg = await this.e.group.makeForwardMsg(forwardMsg)
-    } else {
+    } else if (this.e?.friend?.makeForwardMsg) {
       forwardMsg = await this.e.friend.makeForwardMsg(forwardMsg)
+    } else {
+      return msg.join('\n')
     }
 
+    let dec = 'mc-plugin 更新日志'
     /** 处理描述 */
-    forwardMsg.data = forwardMsg.data
-      .replace(/\n/g, '')
-      .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
-      .replace(/___+/, `<title color="#777777" size="26">${title}</title>`)
+    if (typeof (forwardMsg.data) === 'object') {
+      let detail = forwardMsg.data?.meta?.detail
+      if (detail) {
+        detail.news = [{ text: dec }]
+      }
+    } else {
+      forwardMsg.data = forwardMsg.data
+        .replace(/\n/g, '')
+        .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
+        .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
+    }
 
     return forwardMsg
   }

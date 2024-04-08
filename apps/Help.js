@@ -12,7 +12,7 @@ export class help extends plugin {
             dsc: 'MC插件帮助',
             event: 'message',
             /** 优先级，数字越小等级越高 */
-            priority: 5000,
+            priority: 1009,
             rule: [
                 {
                     /** 命令正则匹配 */

@@ -1,46 +1,62 @@
 import plugin from '../../../lib/plugins/plugin.js'
-import WebSocket from '../components/WebSocket.js'
-import RconConnect from '../components/Rcon.js'
+import RconClient from '../components/Rcon.js'
 import Config from '../components/Config.js'
-
 
 export class Main extends plugin {
   constructor() {
     super({
-      name: 'QQ_MC',
-      dsc: 'QQ群与Minecraft服务器的消息互通',
+      /** 功能名称 */
+      name: 'MC_QQ-同步',
+      /** 功能描述 */
+      dsc: '同步消息',
       event: 'message',
-      priority: 5000,
-      rule: [{
-        reg: '',
-        fnc: 'main',
-        log: false
-      }]
+      /** 优先级，数字越小等级越高 */
+      priority: 1009,
+      rule: [
+        {
+          /** 命令正则匹配 */
+          reg: '',
+          /** 执行方法 */
+          fnc: 'sync',
+          /** 关闭日志 */
+          log: false
+        }
+      ]
     })
-
   }
 
-  async main(e) {
-    const config = await Config.getConfig();
-    if (e.raw_message.startsWith(config.command_header) && e.isMaster) {
-      const shell = e.raw_message.replace(new RegExp(config.command_header, 'g'), '');
-      RconConnect.sendCommand(e, shell, true);
-      return false;
-    }
-  
-    if (e.isGroup && config.group_list.includes(e.group_id)) {
-      let shell = '';
-      const groupPrefix = config.mc_qq_send_group_name ? `[${e.group_name}](${e.sender.nickname}) ` : `(${e.sender.nickname}) `;
-  
-      if (e.img) {
-        shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}§2${e.raw_message}","color":"white","bold":"false","clickEvent":{"action":"open_url","value":"${e.img[0]}"}}]}`;
-      } else {
-        shell = `tellraw @a {"text":"","extra":[{"text":"${groupPrefix}${e.raw_message}","color":"white","bold":"false"}]}`;
-      }
-  
-      RconConnect.sendCommand(e, shell, false);
-    }
-  
-    return false;
+  async sync(e) {
+    if (!e.group_id) return false
+    const { mc_qq_send_group_name, mc_qq_server_list, debug_mode } = await Config.getConfig();
+    const { servers } = RconClient
+    if (!Object.keys(servers).length) return false
+
+    const serversList = mc_qq_server_list
+      .filter(server => server.rcon_able && server.group_list.some(group => group == e.group_id));
+
+    if (!serversList.length) return false
+
+    serversList
+      .map(({ server_name }) => servers[server_name])
+      .filter(server => server !== undefined)
+      .forEach(async (server, i) => {
+        if (e.raw_message.startsWith(serversList[i].command_header) && e.isMaster) {
+          let response = await server.send(`${e.raw_message.replace(serversList[i].command_header, '')}`);
+          e.reply(response);
+        } else {
+          let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
+          msg += `[${e.sender.nickname}] ${e.raw_message}`
+          server.send(`/say ${msg}`);
+          if (debug_mode) {
+            logger.mark(
+              logger.blue('[Minecraft RCON Client] ') + '向 ' +
+              logger.green(serversList[i].server_name) +
+              ' 发送消息 ' + msg
+            )
+          }
+        }
+      })
+
+    return false
   }
 }

@@ -56,11 +56,11 @@ export class Setting extends plugin {
 
     if (e.msg.includes('开启')) {
 
-      if (!server.group_list.includes(e.group_id)) {
+      if (!server.group_list.some(group => group == e.group_id)) {
         server.group_list.push(e.group_id);
       }
 
-      if (!server.bot_self_id.includes(e.self_id)) {
+      if (!server.bot_self_id.some(id => id == e.self_id)) {
         server.bot_self_id.push(e.self_id);
       }
 
@@ -72,12 +72,12 @@ export class Setting extends plugin {
 
     } else if (e.msg.includes('关闭')) {
 
-      const index = server.group_list.indexOf(e.group_id);
+      const index = server.group_list.findIndex(group => group == e.group_id);
       if (index > -1) {
         server.group_list.splice(index, 1);
       }
 
-      const index2 = server.bot_self_id.indexOf(e.self_id);
+      const index2 = server.bot_self_id.findIndex(id => id == e.self_id);
       if (index2 > -1) {
         server.bot_self_id.splice(index2, 1);
       }

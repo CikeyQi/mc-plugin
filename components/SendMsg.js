@@ -1,41 +1,46 @@
 import Config from "./Config.js";
 
-export default function sendMsg(message) {
-    const config = Config.getConfig();
-    const jsonMsg = JSON.parse(message);
-    const displayServerName = config.mc_qq_display_server_name;
-    let msg = displayServerName ? `[${jsonMsg.server_name}] ` : "";
+const getNoticeMessage = (nickname, subType) => {
+    const noticeTypes = {
+        quit: '退出了游戏',
+        join: '加入了游戏',
+        death: '死了'
+    };
+    return `${nickname} ${noticeTypes[subType] || ''}`;
+}
+
+const getMessage = ({server_name, post_type, player, message, sub_type}, displayServerName) => {
+    let msg = displayServerName ? `[${server_name}] ` : "";
     
-    switch (jsonMsg.post_type) {
+    switch (post_type) {
         case 'notice':
-            msg += `${jsonMsg.player.nickname} `;
-            switch (jsonMsg.sub_type) {
-                case 'quit':
-                    msg += `退出了游戏`;
-                    break;
-                case 'join':
-                    msg += `加入了游戏`;
-                    break;
-                case 'death':
-                    msg += `死了`;
-                    break;
-            }
+            msg += getNoticeMessage(player.nickname, sub_type);
             break;
         case 'message':
-            msg += `${jsonMsg.player.nickname} 说：${jsonMsg.message}`;
+            msg += `${player.nickname} 说：${message}`;
             break;
     }
 
-    const serverConfig = config.mc_qq_server_list.find(sConfig => sConfig.server_name === jsonMsg.server_name);
+    return msg;
+}
 
+export default function sendMsg(message) {
+    const { mc_qq_display_server_name, mc_qq_server_list } = Config.getConfig();
+    const jsonMsg = JSON.parse(message);
+    const msg = getMessage(jsonMsg, mc_qq_display_server_name);
+
+    const serverConfig = mc_qq_server_list.find(({ server_name }) => server_name === jsonMsg.server_name);
+    
     if (serverConfig) {
-        serverConfig.bot_self_id.forEach(botSelfID => {
-            serverConfig.group_list.forEach(groupID => {
+        const { bot_self_id, group_list } = serverConfig;
+        
+        bot_self_id.forEach(botID => {
+            group_list.forEach(groupID => {
                 try {
-                    Bot[botSelfID].pickGroup(groupID).sendMsg(msg);
-                    logger.info(`使用机器人 ${botSelfID} 发送消息到群 ${groupID}`);
+                    Bot[botID].pickGroup(groupID).sendMsg(msg);
+                    logger.info(`使用机器人 ${botID} 发送消息到群 ${groupID}`);
                 } catch (error) {
-                    logger.error(`使用机器人 ${botSelfID} 发送消息到群 ${groupID} 失败`);
+                    logger.error(`使用机器人 ${botID} 发送消息到群 ${groupID} 失败：${error.message}`);
                 }
             });
         });

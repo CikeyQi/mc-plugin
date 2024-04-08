@@ -39,7 +39,6 @@ class RconClient {
             )
             this.servers[serverConfig.server_name] = rcon;
 
-
             rcon.on('end', () => {
                 logger.mark(
                     logger.blue('[Minecraft RCON Client] ') +

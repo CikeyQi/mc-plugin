@@ -29,7 +29,7 @@ export class Main extends plugin {
     if (!e.group_id) return false
     const { mc_qq_send_group_name, mc_qq_server_list, debug_mode } = await Config.getConfig();
     const { servers } = RconClient
-    if (!servers.length) return false
+    if (!Object.keys(servers).length) return false
 
     const serversList = mc_qq_server_list
       .filter(server => server.rcon_enable && server.group_list.includes(e.group_id))

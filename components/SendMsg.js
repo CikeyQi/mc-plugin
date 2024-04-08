@@ -9,6 +9,13 @@ const getNoticeMessage = (nickname, subType) => {
     return `${nickname} ${noticeTypes[subType] || ''}`;
 }
 
+const getMessageMessage = (nickname, sub_type, msg) => {
+    if (sub_type === 'chat')
+        return `${nickname} 说：${msg}`;
+    if (sub_type === 'death')
+        return msg;
+}
+
 const getMessage = ({server_name, post_type, player, message, sub_type}, displayServerName) => {
     let msg = displayServerName ? `[${server_name}] ` : "";
     
@@ -17,7 +24,7 @@ const getMessage = ({server_name, post_type, player, message, sub_type}, display
             msg += getNoticeMessage(player.nickname, sub_type);
             break;
         case 'message':
-            msg += `${player.nickname} 说：${message}`;
+            msg += getMessageMessage(player.nickname, sub_type, message);
             break;
     }
 

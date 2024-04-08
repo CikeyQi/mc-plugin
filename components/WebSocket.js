@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws';
 import Config from './Config.js';
 import Init from '../model/init.js';
+import sendMsg from './SendMsg.js';
 
 class WebSocket {
     constructor() {
@@ -13,7 +14,7 @@ class WebSocket {
             let config = await Config.getConfig();
 
             Init.initConfig();
-            
+
             const wss = new WebSocketServer({
                 port: config.mc_qq_ws_port,
                 path: config.mc_qq_ws_url,
@@ -45,11 +46,14 @@ class WebSocket {
                 this.connections[serverName] = ws;
 
                 ws.on('message', (message) => {
-                    logger.mark(
-                        logger.blue('[Minecraft WebSocket] ') +
-                        logger.green(serverName) +
-                        ' 收到消息：' + message
-                    );
+                    if (config.debug_mode) {
+                        logger.mark(
+                            logger.blue('[Minecraft WebSocket] ') +
+                            logger.green(serverName) +
+                            ' 收到消息：' + message
+                        );
+                    }
+                    sendMsg(message)
                 });
 
                 ws.on('close', () => {

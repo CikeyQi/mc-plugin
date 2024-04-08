@@ -3,4 +3,5 @@ mc_qq_ws_port: 8080
 mc_qq_send_group_name: false
 mc_qq_display_server_name: false
 max_attempts: 3
+debug_mode: true
 mc_qq_server_list: []

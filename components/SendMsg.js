@@ -32,7 +32,9 @@ export default function sendMsg(message) {
     const serverConfig = mc_qq_server_list.find(({ server_name }) => server_name === jsonMsg.server_name);
     
     if (serverConfig) {
-        const { bot_self_id, group_list } = serverConfig;
+        const { bot_self_id, group_list, mask_word } = serverConfig;
+
+        msg.replace(mask_word, '');
         
         bot_self_id.forEach(botID => {
             group_list.forEach(groupID => {

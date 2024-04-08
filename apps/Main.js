@@ -27,7 +27,7 @@ export class Main extends plugin {
 
   async sync(e) {
     if (!e.group_id) return false
-    const { mc_qq_send_group_name, mc_qq_server_list } = await Config.getConfig();
+    const { mc_qq_send_group_name, mc_qq_server_list, debug_mode } = await Config.getConfig();
     const { servers } = RconClient
     if (!servers.length) return false
 
@@ -42,7 +42,21 @@ export class Main extends plugin {
     serversList
       .map(server => servers[server.server_name])
       .filter(server => server !== undefined)
-      .forEach(server => server.send(`/say ${msg}`))
+      .forEach(server => {
+        if (msg.startsWith(server.command_header) && e.isMaster) {
+          server.send(`/${msg.replace(server.command_header, '')}`);
+        } else {
+          server.send(`/say ${msg}`);
+        }
+
+        if (debug_mode) {
+          logger.mark(
+            logger.blue('[Minecraft RCON Client] 向 ') +
+            logger.green(server.server_name) +
+            ' 发送消息: ' + msg
+          )
+        }
+      })
 
     return false
   }

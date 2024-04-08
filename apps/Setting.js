@@ -57,11 +57,11 @@ export class Setting extends plugin {
     if (e.msg.includes('开启')) {
 
       if (!server.group_list.some(group => group == e.group_id)) {
-        server.group_list.push(e.group_id);
+        server.group_list.push(e.group_id.toString());
       }
 
       if (!server.bot_self_id.some(id => id == e.self_id)) {
-        server.bot_self_id.push(e.self_id);
+        server.bot_self_id.push(e.self_id.toString())
       }
 
       if (!server.rcon_able) {

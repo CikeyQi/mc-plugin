@@ -32,7 +32,7 @@ export class Main extends plugin {
     if (!Object.keys(servers).length) return false
 
     const serversList = mc_qq_server_list
-      .filter(server => server.rcon_enable && server.group_list.includes(e.group_id))
+      .filter(server => server.rcon_able && server.group_list.includes(e.group_id))
 
     if (!serversList.length) return false
 

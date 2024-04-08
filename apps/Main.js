@@ -36,25 +36,24 @@ export class Main extends plugin {
 
     if (!serversList.length) return false
 
-    let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
-    msg += `[${e.sender.nickname}] ${e.raw_message}`
-
     serversList
       .map(({ server_name }) => servers[server_name])
       .filter(server => server !== undefined)
-      .forEach((server, i) => {
-        if (msg.startsWith(serversList[i].command_header) && e.isMaster) {
-          server.send(`/${msg.replace(serversList[i].command_header, '')}`);
+      .forEach(async (server, i) => {
+        if (e.raw_message.startsWith(serversList[i].command_header) && e.isMaster) {
+          let response = await server.send(`${e.raw_message.replace(serversList[i].command_header, '')}`);
+          e.reply(response);
         } else {
+          let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
+          msg += `[${e.sender.nickname}] ${e.raw_message}`
           server.send(`/say ${msg}`);
-        }
-
-        if (debug_mode) {
-          logger.mark(
-            logger.blue('[Minecraft RCON Client] 向 ') +
-            logger.green(server.server_name) +
-            ' 发送消息: ' + msg
-          )
+          if (debug_mode) {
+            logger.mark(
+              logger.blue('[Minecraft RCON Client] ') + '向 ' +
+              logger.green(serversList[i].server_name) +
+              ' 发送消息 ' + msg
+            )
+          }
         }
       })
 

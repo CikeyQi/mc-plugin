@@ -40,11 +40,11 @@ export class Main extends plugin {
     msg += `[${e.sender.nickname}] ${e.raw_message}`
 
     serversList
-      .map(server => servers[server.server_name])
+      .map(({ server_name }) => servers[server_name])
       .filter(server => server !== undefined)
-      .forEach(server => {
-        if (msg.startsWith(server.command_header) && e.isMaster) {
-          server.send(`/${msg.replace(server.command_header, '')}`);
+      .forEach((server, i) => {
+        if (msg.startsWith(serversList[i].command_header) && e.isMaster) {
+          server.send(`/${msg.replace(serversList[i].command_header, '')}`);
         } else {
           server.send(`/say ${msg}`);
         }

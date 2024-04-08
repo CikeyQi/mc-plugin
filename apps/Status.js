@@ -6,16 +6,22 @@ import Config from '../components/Config.js'
 export class Status extends plugin {
   constructor() {
     super({
-      name: 'Minecraft Server Status',
-      dsc: '查询服务器连接状态',
+      /** 功能名称 */
+      name: 'MC_QQ-状态',
+      /** 功能描述 */
+      dsc: '服务器状态',
       event: 'message',
-      priority: 5000,
-      rule: [{
-        reg: '#?mc状态$',
-        fnc: 'status',
-      }]
+      /** 优先级，数字越小等级越高 */
+      priority: 1009,
+      rule: [
+        {
+          /** 命令正则匹配 */
+          reg: '#?mc状态$',
+          /** 执行方法 */
+          fnc: 'status',
+        }
+      ]
     })
-
   }
 
   async status(e) {
@@ -30,7 +36,6 @@ export class Status extends plugin {
         msg += '\n';
         msg += `┌ 服务器名称：${item.server_name}\n`;
         msg += `├ WebSocket连接状态：${connections[item.server_name] ? '已连接' : '未连接'}\n`;
-        logger.info(item.rcon_able)
         msg += `└ Rcon连接状态：${item.rcon_able ? (server[item.server_name] ? '已连接' : '未连接') : '已关闭'}\n`;
       })
 

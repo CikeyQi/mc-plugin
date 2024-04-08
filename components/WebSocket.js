@@ -44,6 +44,14 @@ class WebSocket {
                 );
                 this.connections[serverName] = ws;
 
+                ws.on('message', (message) => {
+                    logger.mark(
+                        logger.blue('[Minecraft WebSocket] ') +
+                        logger.green(serverName) +
+                        ' 收到消息：' + message
+                    );
+                });
+
                 ws.on('close', () => {
                     logger.mark(
                         logger.blue('[Minecraft WebSocket] ') +

@@ -199,6 +199,27 @@ export function supportGuoba() {
                 },
               },
               {
+                field: "command_user",
+                label: "可用指令的用户",
+                bottomHelpMessage: "请输入可用指令的用户ID",
+                component: "GTags",
+                componentProps: {
+                  placeholder: '请输入可用指令的用户ID',
+                  allowAdd: true,
+                  allowDel: true,
+                  showPrompt: true,
+                  promptProps: {
+                    content: '请输入可用指令的用户ID',
+                    placeholder: '例：10001',
+                    okText: '添加',
+                    rules: [
+                      { required: true, message: '用户ID不能为空' },
+                    ],
+                  },
+                  valueParser: ((value) => value.split(',') || []),
+                },
+              },
+              {
                 field: "mask_word",
                 label: "屏蔽词正则表达式",
                 bottomHelpMessage: "请输入屏蔽词正则表达式",

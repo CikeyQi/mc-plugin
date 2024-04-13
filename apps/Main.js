@@ -40,9 +40,9 @@ export class Main extends plugin {
       .map(({ server_name }) => servers[server_name])
       .filter(server => server !== undefined)
       .forEach(async (server, i) => {
-        if (e.raw_message.startsWith(serversList[i].command_header) && e.isMaster) {
+        if (e.raw_message.startsWith(serversList[i].command_header) && (serversList[i].command_user?.some(user => user == e.user_id) || e.isMaster)) {
           let response = await server.send(`${e.raw_message.replace(serversList[i].command_header, '')}`);
-          e.reply(response);
+          await e.reply(response);
         } else {
           let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
           msg += `[${e.sender.nickname}] ${e.raw_message}`

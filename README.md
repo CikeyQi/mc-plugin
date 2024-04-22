@@ -8,7 +8,7 @@
 
 - 移植于 17TheWord 大佬的 [nonebot-plugin-mcqq](https://github.com/17TheWord/nonebot-plugin-mcqq)，在使用 Nonebot 的同学请传送
 
-- **使用中遇到问题请加QQ群咨询：[707331865](https://qm.qq.com/q/TXTIS9KhO2)**
+- **使用中遇到问题请加 QQ 群咨询：[707331865](https://qm.qq.com/q/TXTIS9KhO2)**
 
 > [!TIP]
 > 群里开了个 Minecraft 服务器，发现一个很好的消息互通插件，就是 17TheWord 大佬的 [nonebot-plugin-mcqq](https://github.com/17TheWord/nonebot-plugin-mcqq)，但发现 Yunzai 没有，于是把插件移植了过来
@@ -22,7 +22,8 @@ git clone https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
 ```
 
 > [!NOTE]
-> 如果你的网络环境较差，无法连接到Github，可以使用 [GitHub Proxy](https://mirror.ghproxy.com/) 提供的文件代理加速下载服务
+> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://mirror.ghproxy.com/) 提供的文件代理加速下载服务
+>
 > ```
 > git clone https://mirror.ghproxy.com/https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
 > ```
@@ -54,12 +55,13 @@ pnpm install --filter=mc-plugin
 - [x] 断线自动重连
 
 ## 常见问题
+
 1. 什么环境才能使用本插件？
-    + 需要机器人所在服务器和 Minecraft 服务器均可互相访问（在同一内网或都有公网）
-    + Minecraft 服务器除了游戏端口 `25565` 还需要另一个端口做 Rcon 服务端口
-    + 机器人服务器需要有一个端口做 WebSocket 服务端口
+   - 需要机器人所在服务器和 Minecraft 服务器均可互相访问（在同一内网或都有公网）
+   - Minecraft 服务器除了游戏端口 `25565` 还需要另一个端口做 Rcon 服务端口
+   - 机器人服务器需要有一个端口做 WebSocket 服务端口
 2. 支持哪些服务端？
-    + `Spigot插件端`，`Minecraft原版端`，`Fabric端`，`Forge端` 均支持
+   - `Spigot插件端`，`Minecraft原版端`，`Fabric端`，`Forge端` 均支持
 
 ## 支持与贡献
 
@@ -68,7 +70,9 @@ pnpm install --filter=mc-plugin
 有意见或者建议也欢迎提交 [Issues](https://github.com/CikeyQi/mc-plugin/issues) 和 [Pull requests](https://github.com/CikeyQi/mc-plugin/pulls)。
 
 ## 相关项目
-* [nonebot-plugin-mcqq](https://github.com/17TheWord/nonebot-plugin-mcqq)：基于NoneBot的与Minecraft Server互通消息的插件
+
+- [nonebot-plugin-mcqq](https://github.com/17TheWord/nonebot-plugin-mcqq)：基于 NoneBot 的与 Minecraft Server 互通消息的插件
 
 ## 许可证
+
 本项目使用 [GNU AGPLv3](https://choosealicense.com/licenses/agpl-3.0/) 作为开源许可证。

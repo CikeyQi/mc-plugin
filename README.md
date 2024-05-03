@@ -39,7 +39,7 @@ pnpm install --filter=mc-plugin
 > [!WARNING]
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
-- Minecraft Server 服务器端相关设置请查看文档：[17 TheWord 文档库](https://17theword.github.io/mc_qq/)
+- Minecraft Server 服务器端相关设置请查看文档：[Minecraft端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
 
 ## 功能列表
 

@@ -42,10 +42,33 @@ export class Main extends plugin {
       .forEach(async (server, i) => {
         if (e.raw_message.startsWith(serversList[i].command_header) && (serversList[i].command_user?.some(user => user == e.user_id) || e.isMaster)) {
           let response = await server.send(`${e.raw_message.replace(serversList[i].command_header, '')}`);
-          await e.reply(response);
+
+          if (debug_mode) {
+            logger.mark(
+              logger.blue('[Minecraft RCON Client] ') + '向 ' +
+              logger.green(serversList[i].server_name) +
+              ' 发送命令 ' + e.raw_message.replace(serversList[i].command_header, '')
+            )
+          }
+
+          if (response) {
+            const mask_word = serversList[i].mask_word;
+            response = response.replace(new RegExp(mask_word, "g"), '');
+
+            await e.reply(response);
+            if (debug_mode) {
+              logger.mark(
+                logger.blue('[Minecraft RCON Client] ') +
+                logger.green(serversList[i].server_name) +
+                ' 返回消息 ' + response
+              )
+            }
+          }
+
         } else {
           let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
           msg += `[${e.sender.nickname}] ${e.raw_message}`
+
           server.send(`say ${msg}`);
           if (debug_mode) {
             logger.mark(

@@ -34,14 +34,14 @@ const getMessage = ({server_name, post_type, player, message, sub_type}, display
 export default function sendMsg(message) {
     const { mc_qq_display_server_name, mc_qq_server_list } = Config.getConfig();
     const jsonMsg = JSON.parse(message);
-    const msg = getMessage(jsonMsg, mc_qq_display_server_name);
+    let msg = getMessage(jsonMsg, mc_qq_display_server_name);
 
     const serverConfig = mc_qq_server_list.find(({ server_name }) => server_name === jsonMsg.server_name);
     
     if (serverConfig) {
         const { bot_self_id, group_list, mask_word } = serverConfig;
 
-        msg.replace(mask_word, '');
+        msg = msg.replace(new RegExp(mask_word, "g"), '');
         
         bot_self_id.forEach(botID => {
             group_list.forEach(groupID => {

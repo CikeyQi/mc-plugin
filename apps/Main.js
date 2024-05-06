@@ -46,7 +46,7 @@ export class Main extends plugin {
         } else {
           let msg = mc_qq_send_group_name ? `[${e.group_name}] ` : "";
           msg += `[${e.sender.nickname}] ${e.raw_message}`
-          server.send(`/say ${msg}`);
+          server.send(`say ${msg}`);
           if (debug_mode) {
             logger.mark(
               logger.blue('[Minecraft RCON Client] ') + '向 ' +

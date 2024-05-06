@@ -225,7 +225,7 @@ export function supportGuoba() {
                 bottomHelpMessage: "请输入屏蔽词正则表达式",
                 component: "Input",
                 componentProps: {
-                  placeholder: '例：/§./g',
+                  placeholder: '例：§.',
                 },
               },
             ],

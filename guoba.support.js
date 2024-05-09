@@ -17,7 +17,7 @@ export function supportGuoba() {
       description: '基于 Yunzai 的 Minecraft 消息互通插件',
       // 显示图标，此为个性化配置
       // 图标可在 https://icon-sets.iconify.design 这里进行搜索
-      icon: 'mdi:minecraft',
+      icon: 'noto:video-game',
       // 图标颜色，例：#FF0000 或 rgb(255, 0, 0)
       iconColor: '#1bb61e',
       // 如果想要显示成图片，也可以填写图标路径（绝对路径）

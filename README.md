@@ -39,7 +39,11 @@ pnpm install --filter=mc-plugin
 > [!WARNING]
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
-- Minecraft Server 服务器端相关设置请查看文档：[Minecraft端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- 请在 [Releases](https://github.com/CikeyQi/mc-plugin/releases) 中下载对应 Minecraft 端的模组、插件或日志监听程序并安装
+
+- Minecraft 端安装后会自行生成配置文件，相关设置请查看文档：[Minecraft端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+
+- 请将Minecraft端配置文件中的 `server_name` 与锅巴中的 `服务器群组配置列表-服务器名称` 保持一致（区分大小写）
 
 ## 功能列表
 

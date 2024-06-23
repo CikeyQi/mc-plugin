@@ -14,7 +14,7 @@ class WebSocketCilent {
         const ws = new WebSocket(serverConfig.ws_url, {
             headers: {
                 'x-self-name': encodeURIComponent(serverConfig.server_name),
-                'Authorization': serverConfig.ws_password
+                'Authorization': encodeURIComponent(serverConfig.ws_password)
             }
         });
 
@@ -101,6 +101,7 @@ class WebSocketCilent {
                 const serverName = JSON.parse(request.headers['x-self-name']);
                 serverName = decodeURIComponent(serverName);
                 const serverToken = JSON.parse(request.headers['Authorization']);
+                serverToken = decodeURIComponent(serverToken);
                 serverToken.replace(/^Bearer /, '');
 
                 if (serverToken !== config.mc_qq_ws_password) {

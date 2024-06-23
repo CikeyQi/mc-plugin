@@ -54,13 +54,13 @@ class RconClient {
                 logger.red(serverConfig.server_name) +
                 ' 连接失败: ' + error.message
             )
-            if (attempts < await Config.getConfig().max_attempts) {
+            if (attempts < serverConfig.rcon_max_attempts) {
                 setTimeout(() => this.connectRcon(serverConfig, attempts + 1), 5000);
             } else {
                 logger.mark(
                     logger.blue('[Minecraft RCON Client] ') +
                     logger.red(serverConfig.server_name) +
-                    ' 连接失败，已达到最大重连次数'
+                    ' 连接失败，已达到最大重连次数，请检查 Rcon 是否正常运行'
                 )
             }
         }

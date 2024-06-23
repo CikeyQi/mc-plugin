@@ -27,16 +27,22 @@ export function supportGuoba() {
       schemas: [
         {
           component: "Divider",
-          label: "WebSocket 相关配置",
+          label: "反向 WebSocket 相关配置",
           componentProps: {
             orientation: "left",
             plain: true,
           },
         },
         {
+          field: "mc_qq_ws_server",
+          label: "WebSocket服务",
+          bottomHelpMessage: "启用反向 WebSocket 服务",
+          component: "Switch",
+        },
+        {
           field: "mc_qq_ws_url",
-          label: "WebSocket路径",
-          bottomHelpMessage: "请输入WebSocket路径",
+          label: "WebSocket路由",
+          bottomHelpMessage: "*非必要请不要修改此项",
           component: "Input",
           componentProps: {
             placeholder: '例：/minecraft/ws',
@@ -45,13 +51,23 @@ export function supportGuoba() {
         {
           field: "mc_qq_ws_port",
           label: "WebSocket端口",
-          bottomHelpMessage: "请输入WebSocket端口",
+          bottomHelpMessage: "反向 WebSocket 服务监听端口",
           component: "InputNumber",
           componentProps: {
             placeholder: '例：8080',
             min: 1,
             max: 65535,
             step: 1,
+          },
+        },
+        {
+          field: "mc_qq_ws_password",
+          label: "WebSocket密钥",
+          bottomHelpMessage: "反向 WebSocket 服务 Access Token",
+          component: "InputPassword",
+          componentProps: {
+            placeholder: '请输入密钥',
+            visible: false,
           },
         },
         {
@@ -75,23 +91,26 @@ export function supportGuoba() {
           component: "Switch",
         },
         {
-          component: "Divider",
-          label: "Rcon 相关配置",
+          field: "mc_qq_say_way",
+          label: "修饰用户发言",
+          bottomHelpMessage: "请输入修饰词",
+          component: "Input",
           componentProps: {
-            orientation: "left",
-            plain: true,
+            placeholder: '例：说：',
           },
         },
         {
-          field: "max_attempts",
-          label: "断连重试次数",
-          bottomHelpMessage: "Rcon最大尝试次数",
-          component: "InputNumber",
+          field: "mc_qq_chat_image_enable",
+          label: "发送图片",
+          bottomHelpMessage: "搭配ChatImage，可以让图片在游戏内显示",
+          component: "Switch",
+        },
+        {
+          component: "Divider",
+          label: "服务器 相关配置",
           componentProps: {
-            placeholder: '例：3',
-            min: 1,
-            max: 999999,
-            step: 1,
+            orientation: "left",
+            plain: true,
           },
         },
         {
@@ -112,9 +131,61 @@ export function supportGuoba() {
                 },
               },
               {
+                component: "Divider",
+                label: "正向 WebSocket 相关配置",
+                componentProps: {
+                  orientation: "left",
+                  plain: true,
+                },
+              },
+              {
+                field: "ws_able",
+                label: "WebSocket服务",
+                bottomHelpMessage: "启用正向 WebSocket 服务",
+                component: "Switch",
+              },
+              {
+                field: "ws_url",
+                label: "WebSocket地址",
+                bottomHelpMessage: "正向 WebSocket 连接地址",
+                component: "Input",
+                componentProps: {
+                  placeholder: '例：ws://127.0.0.1:8081',
+                },
+              },
+              {
+                field: "ws_password",
+                label: "WebSocket密钥",
+                bottomHelpMessage: "正向 WebSocket 服务 Access Token",
+                component: "Input",
+                componentProps: {
+                  placeholder: '请输入密钥',
+                },
+              },
+              {
+                field: "ws_max_attempts",
+                label: "断连重试次数",
+                bottomHelpMessage: "正向 WebSocket 重连最大尝试次数",
+                component: "InputNumber",
+                componentProps: {
+                  placeholder: '例：3',
+                  min: 1,
+                  max: 999999,
+                  step: 1,
+                },
+              },
+              {
+                component: "Divider",
+                label: "Rcon 相关配置",
+                componentProps: {
+                  orientation: "left",
+                  plain: true,
+                },
+              },
+              {
                 field: "rcon_able",
                 label: "是否启用Rcon",
-                bottomHelpMessage: "若需要向服务器发送消息/指令，请启用Rcon",
+                bottomHelpMessage: "若需要向服务器发送指令，请启用Rcon",
                 component: "Switch",
               },
               {
@@ -146,6 +217,26 @@ export function supportGuoba() {
                 componentProps: {
                   placeholder: '与server.properties中的rcon.password一致',
                   visible: false,
+                },
+              },
+              {
+                field: "rcon_max_attempts",
+                label: "断连重试次数",
+                bottomHelpMessage: "Rcon 重连最大尝试次数",
+                component: "InputNumber",
+                componentProps: {
+                  placeholder: '例：3',
+                  min: 1,
+                  max: 999999,
+                  step: 1,
+                },
+              },
+              {
+                component: "Divider",
+                label: "群组同步 相关配置",
+                componentProps: {
+                  orientation: "left",
+                  plain: true,
                 },
               },
               {

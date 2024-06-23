@@ -1,7 +1,10 @@
+mc_qq_ws_server: true
 mc_qq_ws_url: /minecraft/ws
 mc_qq_ws_port: 8080
-mc_qq_send_group_name: false
-mc_qq_display_server_name: false
-max_attempts: 3
-debug_mode: true
+mc_qq_ws_password: "123456"
+mc_qq_send_group_name: true
+mc_qq_display_server_name: true
+mc_qq_say_way: 说：
+mc_qq_chat_image_enable: true
 mc_qq_server_list: []
+debug_mode: true

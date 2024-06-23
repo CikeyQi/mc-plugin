@@ -42,70 +42,20 @@ export class help extends plugin {
                 "list": [
                     {
                         "icon": 1,
-                        "title": "#mc设置ws路由",
-                        "desc": "设置ws路由地址"
+                        "title": "#mc状态",
+                        "desc": "查看连接状态"
                     },
                     {
                         "icon": 5,
-                        "title": "#mc设置ws端口",
-                        "desc": "设置ws端口"
+                        "title": "#mc开启同步+服务器名称",
+                        "desc": "将当前群聊与指定服务器同步"
                     },
                     {
                         "icon": 7,
-                        "title": "#mc设置rcon状态",
-                        "desc": "设置rcon开启或关闭"
-                    },
-                    {
-                        "icon": 11,
-                        "title": "#mc设置rcon地址",
-                        "desc": "设置rcon地址"
-                    },
-                    {
-                        "icon": 54,
-                        "title": "#mc设置rcon端口",
-                        "desc": "设置rcon端口"
-                    },
-                    {
-                        "icon": 86,
-                        "title": "#mc设置rcon密码",
-                        "desc": "设置rcon密码"
-                    },
-                    {
-                        "icon": 3,
-                        "title": "#mc设置群名显示",
-                        "desc": "服务器中群名显示开启或关闭"
-                    },
-                    {
-                        "icon": 38,
-                        "title": "#mc设置(开启|关闭)同步",
-                        "desc": "控制本群消息与服务器消息同步"
-                    },
-                    {
-                        "icon": 36,
-                        "title": "#mc设置命令响应头",
-                        "desc": "自定义响MC命令应头'/','~'"
-                    },
-                    {
-                        "icon": 40,
-                        "title": "#mc设置乱码修复",
-                        "desc": "消息乱码时可尝试开启此功能"
-                    },
-                    {
-                        "icon": 85,
-                        "title": "#mc设置屏蔽词",
-                        "desc": "使用正则表达式添加屏蔽词"
+                        "title": "#mc关闭同步+服务器名称",
+                        "desc": "关闭当前群聊与服务器同步"
                     },
                 ],
-            },
-            {
-                "group": "MC查询",
-                "list": [
-                    {
-                        "icon": 62,
-                        "title": "#mc状态",
-                        "desc": "查询服务器状态"
-                    },
-                ]
             }
         ]
         let helpGroup = []

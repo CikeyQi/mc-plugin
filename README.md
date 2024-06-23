@@ -41,9 +41,13 @@ pnpm install --filter=mc-plugin
 
 - 请在 [Releases](https://github.com/CikeyQi/mc-plugin/releases) 中下载对应 Minecraft 端的模组、插件或日志监听程序并安装
 
-- Minecraft 端安装后会自行生成配置文件，相关设置请查看文档：[Minecraft端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- 启动一遍 Minecraft 服务器，等待生成配置文件，配置文件一般生成在 模组、插件或日志监听程序所在目录下的 `MC_QQ` 文件夹中的 `config.yml` 文件中，配置文件相关设置请查看文档：[Minecraft 端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)，更改配置文件需要重启 Minecraft 服务器才能生效
 
-- 请将Minecraft端配置文件中的 `server_name` 与锅巴中的 `服务器群组配置列表-服务器名称` 保持一致（区分大小写）
+- 使用 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) 插件修改插件配置文件。如果机器人服务器有公网请使用反向 WebSocket ，如果 Minecraft 端有公网，请使用正向 WebSocket，只需要连接一个即可开启消息同步。如果需要执行命令请配置 Rcon ，RCON 功能需要 Minecraft 端有公网。更改配置文件需要重启机器人才能生效
+
+- 请将 Minecraft 端配置文件中的 `server_name` 与锅巴中的 `服务器群组配置列表-服务器名称` 保持一致才能正确识别配置（区分大小写）
+
+- 发送 `#mc状态` 如果 WebSocket 已连接即可正常同步消息，如果 Rcon 已连接即可命令控制服务器，如果没有内容说明你没有配置锅巴中的 `服务器群组配置列表` 项
 
 ## 功能列表
 
@@ -51,19 +55,19 @@ pnpm install --filter=mc-plugin
 
 - [x] 玩家加入 / 离开服务器消息
 - [x] 玩家聊天信息发送到群内
-- [x] 玩家死亡信息（死亡信息为英文，非插件服务端不适用）
+- [x] 玩家死亡信息
 - [x] 群内使用指令
 - [x] 群员聊天文本发送到服务器
 - [x] 特殊消息支持
 - [x] 多服务器连接
 - [x] 断线自动重连
+- [x] 正向 / 反向 WebSocke t连接
+- [x] 使用 [@kitUIN/ChatImage](https://github.com/kitUIN/ChatImage) 在游戏内显示图片
 
 ## 常见问题
 
 1. 什么环境才能使用本插件？
-   - 需要机器人所在服务器和 Minecraft 服务器均可互相访问（在同一内网或都有公网）
-   - Minecraft 服务器除了游戏端口 `25565` 还需要另一个端口做 Rcon 服务端口
-   - 机器人服务器需要有一个端口做 WebSocket 服务端口
+   - 需要机器人所在服务器和 Minecraft 服务器任意一个可以被另一个访问（在同一内网或至少其中一个有公网）
 2. 支持哪些服务端？
    - `Spigot插件端`，`Minecraft原版端`，`Fabric端`，`Forge端` 均支持
 

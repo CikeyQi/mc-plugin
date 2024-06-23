@@ -35,8 +35,26 @@ export class Main extends plugin {
     if (!mc_qq_server_list.length) return false
 
     const serversList = mc_qq_server_list.filter(server => server.group_list.some(group => group == e.group_id))
+
     serversList.forEach(async (serverConfig, i) => {
+      if (!servers[serverConfig.server_name] && !connections[serverConfig.server_name]) {
+        if (debug_mode) {
+          logger.mark(
+            logger.blue('[Minecraft Client] ') +
+            logger.green(serverConfig.server_name) +
+            ' 未连接'
+          )
+        }
+        return false
+      }
+
       if (e.raw_message.startsWith(serverConfig.command_header) && (serverConfig.command_user?.some(user => user == e.user_id) || e.isMaster)) {
+
+        if (!servers[serverConfig.server_name]) {
+          await e.reply(`${serverConfig.server_name} 未连接，无法执行服务器命令`)
+          return false
+        }
+
         let response = await servers[serverConfig.server_name].send(`${e.raw_message.replace(serverConfig.command_header, '')}`);
 
         if (debug_mode) {
@@ -61,6 +79,7 @@ export class Main extends plugin {
           }
         }
       } else {
+
         let messages = [{
           text: `${mc_qq_send_group_name ? `[${e.group_name}] ` : ""}[${e.sender.nickname}] ` + mc_qq_say_way,
         }];
@@ -81,19 +100,37 @@ export class Main extends plugin {
           messages.push(msg);
         });
 
-        connections[serverConfig.server_name].send({
-          api: "broadcast",
-          data: {
-            message_list: messages,
-          }
-        });
+        if (!connections[serverConfig.server_name]) {
 
-        if (debug_mode) {
-          logger.mark(
-            logger.blue('[Minecraft RCON Client] ') + '向 ' +
-            logger.green(serverConfig.server_name) +
-            ' 发送消息 ' + messages
-          )
+          let text = messages.map(msg => msg.text).join('');
+
+          servers[serverConfig.server_name].send('say ' + text);
+
+          if (debug_mode) {
+            logger.mark(
+              logger.blue('[Minecraft RCON Client] ') + '向 ' +
+              logger.green(serverConfig.server_name) +
+              ' 发送消息 ' + text
+            )
+          }
+
+        } else {
+
+          connections[serverConfig.server_name].send(JSON.stringify({
+            api: "broadcast",
+            data: {
+              message_list: messages,
+            }
+          }));
+
+          if (debug_mode) {
+            logger.mark(
+              logger.blue('[Minecraft WebSocket] ') + '向 ' +
+              logger.green(serverConfig.server_name) +
+              ' 发送消息 ' + messages
+            )
+          }
+
         }
       }
     })

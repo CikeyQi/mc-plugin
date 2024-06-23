@@ -1,7 +1,7 @@
 mc_qq_ws_server: true
 mc_qq_ws_url: /minecraft/ws
 mc_qq_ws_port: 8080
-mc_qq_ws_password: "123456"
+mc_qq_ws_password: ""
 mc_qq_send_group_name: true
 mc_qq_display_server_name: true
 mc_qq_say_way: 说：

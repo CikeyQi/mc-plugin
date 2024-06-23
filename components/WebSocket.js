@@ -14,7 +14,7 @@ class WebSocketCilent {
         const ws = new WebSocket(serverConfig.ws_url, {
             headers: {
                 'x-self-name': encodeURIComponent(serverConfig.server_name),
-                'Authorization': encodeURIComponent(serverConfig.ws_password)
+                'Authorization': 'Bearer ' + encodeURIComponent(serverConfig.ws_password)
             }
         });
 
@@ -98,13 +98,13 @@ class WebSocketCilent {
             });
 
             wss.on('connection', (ws, request) => {
-                const serverName = JSON.parse(request.headers['x-self-name']);
+                let serverName = request.headers['x-self-name'];
                 serverName = decodeURIComponent(serverName);
-                const serverToken = JSON.parse(request.headers['Authorization']);
+                let serverToken = request.headers['authorization'] || '';
                 serverToken = decodeURIComponent(serverToken);
-                serverToken.replace(/^Bearer /, '');
+                serverToken = serverToken.replace(/^Bearer /, '');
 
-                if (serverToken !== config.mc_qq_ws_password) {
+                if (serverToken != config.mc_qq_ws_password) {
                     ws.close(1000, 'Invalid token');
                     logger.mark(
                         logger.blue('[Minecraft WebSocket] ') +

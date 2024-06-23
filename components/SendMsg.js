@@ -11,14 +11,14 @@ const getNoticeMessage = (nickname, subType) => {
 
 const getMessageMessage = (nickname, sub_type, msg) => {
     if (sub_type === 'chat')
-        return `${nickname} 说：${msg}`;
+        return `${nickname} ${Config.getConfig().mc_qq_say_way}${msg}`;
     if (sub_type === 'death')
         return msg;
 }
 
-const getMessage = ({server_name, post_type, player, message, sub_type}, displayServerName) => {
+const getMessage = ({ server_name, post_type, player, message, sub_type }, displayServerName) => {
     let msg = displayServerName ? `[${server_name}] ` : "";
-    
+
     switch (post_type) {
         case 'notice':
             msg += getNoticeMessage(player.nickname, sub_type);
@@ -37,12 +37,12 @@ export default function sendMsg(message) {
     let msg = getMessage(jsonMsg, mc_qq_display_server_name);
 
     const serverConfig = mc_qq_server_list.find(({ server_name }) => server_name === jsonMsg.server_name);
-    
+
     if (serverConfig) {
         const { bot_self_id, group_list, mask_word } = serverConfig;
 
         msg = msg.replace(new RegExp(mask_word, "g"), '');
-        
+
         bot_self_id.forEach(botID => {
             group_list.forEach(groupID => {
                 try {

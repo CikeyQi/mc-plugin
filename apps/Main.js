@@ -28,7 +28,7 @@ export class Main extends plugin {
 
   async sync(e) {
     if (!e.group_id) return false
-    const { mc_qq_send_group_name, mc_qq_say_way, mc_qq_server_list, debug_mode } = await Config.getConfig();
+    const { mc_qq_send_group_name, mc_qq_say_way, mc_qq_chat_image_enable, mc_qq_server_list, debug_mode } = await Config.getConfig();
     const { servers } = RconClient
     const { connections } = WebSocketCilent
 
@@ -66,15 +66,19 @@ export class Main extends plugin {
         }];
 
         e.message.forEach(element => {
-          let msg = '';
+          let msg = {};
           if (element.type === 'text') {
-            msg = element.text;
+            msg = { text: element.text.replace("\r", "").replace("\n", "\n * "), color: "white" };
           } else if (element.type === 'image') {
-            msg = `[[CICode,url=${element.url},name=图片]]`;
+            if (mc_qq_chat_image_enable) {
+              msg = { text: `[[CICode,url=${element.url},name=图片]]` };
+            } else {
+              msg = { text: `[图片]`, color: "aqua", click_event: { action: "open_url", value: element.url } };
+            }
           } else {
-            msg = element.text || '';
+            msg = { text: element.text || "" }
           }
-          messages.push({ text: msg });
+          messages.push(msg);
         });
 
         connections[serverConfig.server_name].send({

@@ -67,7 +67,7 @@ export class Main extends plugin {
 
         if (response) {
           const mask_word = serverConfig.mask_word;
-          response = response.replace(new RegExp(mask_word, "g"), '');
+          response = response.replace(new RegExp(mask_word, "g"), '').replace(/§./g, "").trim();
 
           await e.reply(response);
           if (debug_mode) {

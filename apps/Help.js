@@ -46,15 +46,20 @@ export class help extends plugin {
                         "desc": "查看连接状态"
                     },
                     {
-                        "icon": 5,
+                        "icon": 2,
                         "title": "#mc开启同步+服务器名称",
                         "desc": "将当前群聊与指定服务器同步"
                     },
                     {
-                        "icon": 7,
+                        "icon": 3,
                         "title": "#mc关闭同步+服务器名称",
                         "desc": "关闭当前群聊与服务器同步"
                     },
+                    {
+                        "icon": 4,
+                        "title": "#mc重连",
+                        "desc": "手动重连服务器"
+                    }
                 ],
             }
         ]

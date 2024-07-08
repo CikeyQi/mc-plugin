@@ -14,7 +14,7 @@ class RconClient {
             Init.initConfig();
 
             config.mc_qq_server_list.forEach(serverConfig => {
-                if (serverConfig.rcon_able) {
+                if (serverConfig.rcon_able && !this.servers[serverConfig.server_name]) {
                     this.connectRcon(serverConfig);
                 }
             });

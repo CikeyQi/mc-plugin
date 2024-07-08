@@ -126,6 +126,7 @@ export function supportGuoba() {
                 label: "服务器名称",
                 bottomHelpMessage: "请输入服务器名称",
                 component: "Input",
+                required: true,
                 componentProps: {
                   placeholder: '需要与服务器端配置一致，且不能有重复',
                 },
@@ -286,6 +287,7 @@ export function supportGuoba() {
                 label: "指令前缀",
                 bottomHelpMessage: "请输入指令前缀",
                 component: "Input",
+                required: true,
                 componentProps: {
                   placeholder: '例：/',
                 },

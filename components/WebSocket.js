@@ -6,70 +6,8 @@ import sendMsg from './SendMsg.js';
 class WebSocketCilent {
     constructor() {
         this.initWebSocket();
+        this.connectWebSocket();
         this.connections = {}
-    }
-
-    async connectWebSocket(serverConfig, attempts = 0) {
-
-        const ws = new WebSocket(serverConfig.ws_url, {
-            headers: {
-                'x-self-name': encodeURIComponent(serverConfig.server_name),
-                'Authorization': 'Bearer ' + encodeURIComponent(serverConfig.ws_password)
-            }
-        });
-
-        ws.on('open', () => {
-            logger.mark(
-                logger.blue('[Minecraft WebSocket] ') +
-                logger.green(serverConfig.server_name) +
-                ' 已连接至 WebSocket 服务器'
-            );
-        });
-
-        ws.on('message', (message) => {
-            logger.mark(
-                logger.blue('[Minecraft WebSocket] ') +
-                logger.green(serverConfig.server_name) +
-                ' 收到消息：' +
-                logger.green(message)
-            );
-            sendMsg(message);
-        });
-
-        ws.on('close', () => {
-            logger.mark(
-                logger.blue('[Minecraft WebSocket] ') +
-                logger.yellow(serverConfig.server_name) +
-                ' 与 WebSocket 服务器断开连接'
-            );
-            if (attempts >= serverConfig.ws_max_attempts) {
-                logger.mark(
-                    logger.blue('[Minecraft WebSocket] ') +
-                    logger.red(serverConfig.server_name) +
-                    ' 与 WebSocket 服务器断开连接，已达最大重连次数，请检查 WebSocket 服务器是否正常运行'
-                );
-            } else {
-                logger.mark(
-                    logger.blue('[Minecraft WebSocket] ') +
-                    logger.yellow(serverConfig.server_name) +
-                    '  连接已断开，正在重连...'
-                );
-                setTimeout(() => {
-                    this.connectWebSocket(serverConfig, attempts + 1);
-                }, 5000);
-            }
-        });
-
-        ws.on('error', (error) => {
-            logger.mark(
-                logger.blue('[Minecraft WebSocket] ') +
-                logger.red(serverConfig.server_name) +
-                ' 与 WebSocket 服务器发生错误：' +
-                logger.red(error)
-            );
-        });
-
-        this.connections[serverConfig.server_name] = ws;
     }
 
     async initWebSocket() {
@@ -89,12 +27,6 @@ class WebSocketCilent {
                     ' 连接地址：' +
                     logger.green(`ws://localhost:${config.mc_qq_ws_port}${config.mc_qq_ws_url}`)
                 );
-            });
-
-            config.mc_qq_server_list.forEach(serverConfig => {
-                if (serverConfig.ws_able) {
-                    this.connectWebSocket(serverConfig);
-                }
             });
 
             wss.on('connection', (ws, request) => {
@@ -155,6 +87,80 @@ class WebSocketCilent {
             logger.error(error);
             throw error;
         }
+    }
+
+    async connectWebSocket() {
+        let config = await Config.getConfig();
+
+        Init.initConfig();
+
+        config.mc_qq_server_list.forEach(serverConfig => {
+            if (serverConfig.ws_able && !this.connections[serverConfig.server_name]) {
+                this.connect(serverConfig);
+            }
+        });
+    }
+
+    async connect(serverConfig, attempts = 0) {
+
+        const ws = new WebSocket(serverConfig.ws_url, {
+            headers: {
+                'x-self-name': encodeURIComponent(serverConfig.server_name),
+                'Authorization': 'Bearer ' + encodeURIComponent(serverConfig.ws_password)
+            }
+        });
+
+        ws.on('open', () => {
+            logger.mark(
+                logger.blue('[Minecraft WebSocket] ') +
+                logger.green(serverConfig.server_name) +
+                ' 已连接至 WebSocket 服务器'
+            );
+            this.connections[serverConfig.server_name] = ws;
+        });
+
+        ws.on('message', (message) => {
+            logger.mark(
+                logger.blue('[Minecraft WebSocket] ') +
+                logger.green(serverConfig.server_name) +
+                ' 收到消息：' +
+                logger.green(message)
+            );
+            sendMsg(message);
+        });
+
+        ws.on('close', () => {
+            logger.mark(
+                logger.blue('[Minecraft WebSocket] ') +
+                logger.yellow(serverConfig.server_name) +
+                ' 与 WebSocket 服务器断开连接'
+            );
+            if (attempts >= serverConfig.ws_max_attempts) {
+                logger.mark(
+                    logger.blue('[Minecraft WebSocket] ') +
+                    logger.red(serverConfig.server_name) +
+                    ' 与 WebSocket 服务器断开连接，已达最大重连次数，请检查 WebSocket 服务器是否正常运行'
+                );
+            } else {
+                logger.mark(
+                    logger.blue('[Minecraft WebSocket] ') +
+                    logger.yellow(serverConfig.server_name) +
+                    '  连接已断开，正在重连...'
+                );
+                setTimeout(() => {
+                    this.connect(serverConfig, attempts + 1);
+                }, 5000);
+            }
+        });
+
+        ws.on('error', (error) => {
+            logger.mark(
+                logger.blue('[Minecraft WebSocket] ') +
+                logger.red(serverConfig.server_name) +
+                ' 与 WebSocket 服务器发生错误：' +
+                logger.red(error)
+            );
+        });
     }
 }
 

@@ -1,4 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js'
+import WebSocket from '../components/WebSocket.js'
+import RconClient from '../components/Rcon.js'
 import Config from '../components/Config.js'
 import Init from '../model/init.js'
 
@@ -18,6 +20,14 @@ export class Setting extends plugin {
           reg: '#?mc(开启|关闭)同步.*$',
           /** 执行方法 */
           fnc: 'setting',
+          /** 主人权限 */
+          permission: 'master'
+        },
+        {
+          /** 命令正则匹配 */
+          reg: '#?mc重连$',
+          /** 执行方法 */
+          fnc: 'reconnect',
           /** 主人权限 */
           permission: 'master'
         }
@@ -92,6 +102,15 @@ export class Setting extends plugin {
     }
     config.mc_qq_server_list[config.mc_qq_server_list.findIndex(s => s.server_name === server_name)] = server;
     Config.setConfig(config);
+    return true
+  }
+
+  async reconnect(e) {
+    await e.reply('正在重连全部已掉线服务器，请稍后...')
+
+    await WebSocket.connectWebSocket()
+    await RconClient.initRconClient()
+
     return true
   }
 }

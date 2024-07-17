@@ -104,7 +104,7 @@ export class Main extends plugin {
 
           let text = messages.map(msg => msg.text).join('');
 
-          servers[serverConfig.server_name].send('say ' + text);
+          servers[serverConfig.server_name].send(`tellraw @a {"text":"${text}"}`);
 
           if (debug_mode) {
             logger.mark(

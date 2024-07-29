@@ -14,7 +14,9 @@ class WebSocketCilent {
         try {
             let config = await Config.getConfig();
 
-            Init.initConfig();
+            if (!config.mc_qq_ws_server) {
+                return;
+            }
 
             const wss = new WebSocketServer({
                 port: config.mc_qq_ws_port,
@@ -92,16 +94,14 @@ class WebSocketCilent {
     async connectWebSocket() {
         let config = await Config.getConfig();
 
-        Init.initConfig();
-
         config.mc_qq_server_list.forEach(serverConfig => {
             if (serverConfig.ws_able && !this.connections[serverConfig.server_name]) {
-                this.connect(serverConfig);
+                this.connect(serverConfig, config);
             }
         });
     }
 
-    async connect(serverConfig, attempts = 0) {
+    async connect(serverConfig, config, attempts = 0) {
 
         const ws = new WebSocket(serverConfig.ws_url, {
             headers: {
@@ -120,12 +120,14 @@ class WebSocketCilent {
         });
 
         ws.on('message', (message) => {
-            logger.mark(
-                logger.blue('[Minecraft WebSocket] ') +
-                logger.green(serverConfig.server_name) +
-                ' 收到消息：' +
-                logger.green(message)
-            );
+            if (config.debug_mode) {
+                logger.mark(
+                    logger.blue('[Minecraft WebSocket] ') +
+                    logger.green(serverConfig.server_name) +
+                    ' 收到消息：' +
+                    logger.green(message)
+                );
+            }
             sendMsg(message);
         });
 
@@ -148,7 +150,7 @@ class WebSocketCilent {
                     '  连接已断开，正在重连...'
                 );
                 setTimeout(() => {
-                    this.connect(serverConfig, attempts + 1);
+                    this.connect(serverConfig, config, attempts + 1);
                 }, 5000);
             }
         });

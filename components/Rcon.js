@@ -11,7 +11,6 @@ class RconClient {
     async initRconClient() {
         try {
             const config = await Config.getConfig();
-            Init.initConfig();
 
             config.mc_qq_server_list.forEach(serverConfig => {
                 if (serverConfig.rcon_able && !this.servers[serverConfig.server_name]) {

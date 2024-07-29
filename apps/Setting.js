@@ -42,7 +42,6 @@ export class Setting extends plugin {
       return true
     }
 
-    Init.initConfig()
     var config = Config.getConfig()
 
     if (!config.mc_qq_server_list.length) {

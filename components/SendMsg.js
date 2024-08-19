@@ -43,6 +43,8 @@ export default function sendMsg(message) {
 
         msg = msg.replace(new RegExp(mask_word, "g"), '');
 
+        if (!bot_self_id) return logger.error(`服务器 ${jsonMsg.server_name} 未配置推送机器人ID，忽略消息`);
+
         bot_self_id.forEach(botID => {
             group_list.forEach(groupID => {
                 try {

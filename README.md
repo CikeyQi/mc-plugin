@@ -39,9 +39,9 @@ pnpm install --filter=mc-plugin
 > [!WARNING]
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
-- 请在 [Releases](https://github.com/CikeyQi/mc-plugin/releases) 中下载对应 Minecraft 端的模组、插件或日志监听程序并安装
+- 请在 [Releases](https://github.com/17TheWord/QueQiao/releases) 中下载对应 Minecraft 端的模组、插件并安装
 
-- 启动一遍 Minecraft 服务器，等待生成配置文件，配置文件一般生成在 模组、插件或日志监听程序所在目录下的 `MC_QQ` 文件夹中的 `config.yml` 文件中，配置文件相关设置请查看文档：[Minecraft 端配置文件](https://github.com/17TheWord/nonebot-plugin-mcqq/wiki/4.-Minecraft%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)，更改配置文件需要重启 Minecraft 服务器才能生效
+- Minecraft 服务器端的配置文件相关设置请查看文档：[QueQiao wiki](https://github.com/17TheWord/QueQiao/wiki)，请按照 Wiki 中的说明进行配置
 
 - 使用 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) 插件修改插件配置文件。如果机器人服务器有公网请使用反向 WebSocket ，如果 Minecraft 端有公网，请使用正向 WebSocket，只需要连接一个即可开启消息同步。如果需要执行命令请配置 Rcon ，RCON 功能需要 Minecraft 端有公网。更改配置文件需要重启机器人才能生效
 
@@ -61,7 +61,7 @@ pnpm install --filter=mc-plugin
 - [x] 特殊消息支持
 - [x] 多服务器连接
 - [x] 断线自动重连
-- [x] 正向 / 反向 WebSocke t连接
+- [x] 正向 / 反向 WebSocket连接
 - [x] 使用 [@kitUIN/ChatImage](https://github.com/kitUIN/ChatImage) 在游戏内显示图片
 
 ## 常见问题
@@ -69,7 +69,7 @@ pnpm install --filter=mc-plugin
 1. 什么环境才能使用本插件？
    - 需要机器人所在服务器和 Minecraft 服务器任意一个可以被另一个访问（在同一内网或至少其中一个有公网）
 2. 支持哪些服务端？
-   - `Spigot插件端`，`Minecraft原版端`，`Fabric端`，`Forge端` 均支持
+   - `Spigot端`，`Velocity端`，`Fabric端`，`Forge端` 均支持
 
 ## 支持与贡献
 

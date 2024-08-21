@@ -11,9 +11,11 @@ const getNoticeMessage = (nickname, subType) => {
 
 const getMessageMessage = (nickname, sub_type, msg) => {
     if (sub_type === 'chat')
-        return `${nickname} ${Config.getConfig().mc_qq_say_way}${msg}`;
+        return `${nickname} ${Config.getConfig().mc_qq_say_way} ${msg}`;
     if (sub_type === 'death')
         return msg;
+    if (sub_type === 'player_command')
+        return `${nickname} 使用命令 ${msg}`;
 }
 
 const getMessage = ({ server_name, post_type, player, message, sub_type }, displayServerName) => {

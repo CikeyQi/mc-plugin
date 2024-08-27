@@ -39,15 +39,7 @@ pnpm install --filter=mc-plugin
 > [!WARNING]
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
-- 请在 [Releases](https://github.com/17TheWord/QueQiao/releases) 中下载对应 Minecraft 端的模组、插件并安装
-
-- Minecraft 服务器端的配置文件相关设置请查看文档：[QueQiao wiki](https://github.com/17TheWord/QueQiao/wiki)，请按照 Wiki 中的说明进行配置
-
-- 使用 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) 插件修改插件配置文件。如果机器人服务器有公网请使用反向 WebSocket ，如果 Minecraft 端有公网，请使用正向 WebSocket，只需要连接一个即可开启消息同步。如果需要执行命令请配置 Rcon ，RCON 功能需要 Minecraft 端有公网。更改配置文件需要重启机器人才能生效
-
-- 请将 Minecraft 端配置文件中的 `server_name` 与锅巴中的 `服务器群组配置列表-服务器名称` 保持一致才能正确识别配置（区分大小写）
-
-- 发送 `#mc状态` 如果 WebSocket 已连接即可正常同步消息，如果 Rcon 已连接即可命令控制服务器，如果没有内容说明你没有配置锅巴中的 `服务器群组配置列表` 项
+- 请查看文档：[Wiki](https://github.com/CikeyQi/mc-plugin/wiki)，请按照 Wiki 中的说明进行配置
 
 ## 功能列表
 

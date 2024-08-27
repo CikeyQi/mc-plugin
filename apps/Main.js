@@ -81,21 +81,22 @@ export class Main extends plugin {
       } else {
 
         let messages = [{
-          text: `${mc_qq_send_group_name ? `[${e.group_name}] ` : ""}[${e.sender.nickname}] ` + mc_qq_say_way,
+          type: "text",
+          data: {text: `${mc_qq_send_group_name ? `[${e.group_name}] ` : ""}[${e.sender.nickname}] ` + mc_qq_say_way,}
         }];
 
         e.message.forEach(element => {
           let msg = {};
           if (element.type === 'text') {
-            msg = { text: element.text.replace("\r", "").replace("\n", "\n * "), color: "white" };
+            msg = {type: "text", data: { text: element.text.replace("\r", "").replace("\n", "\n * "), color: "white" }};
           } else if (element.type === 'image') {
             if (mc_qq_chat_image_enable) {
-              msg = { text: `[[CICode,url=${element.url},name=图片]]` };
+              msg = {type:"text", data: { text: `[[CICode,url=${element.url},name=图片]]` }};
             } else {
-              msg = { text: `[图片]`, color: "aqua", click_event: { action: "open_url", value: element.url } };
+              msg = {type:"text", data: { text: `[图片]`, color: "aqua", click_event: { action: "open_url", value: element.url } }};
             }
           } else {
-            msg = { text: element.text || "" }
+            msg = {type:"text", data:{ text: element.text || "" }}
           }
           messages.push(msg);
         });
@@ -119,7 +120,7 @@ export class Main extends plugin {
           connections[serverConfig.server_name].send(JSON.stringify({
             api: "broadcast",
             data: {
-              message_list: messages,
+              message: messages,
             }
           }));
 

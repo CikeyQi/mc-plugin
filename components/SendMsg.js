@@ -28,6 +28,9 @@ const getMessage = ({ server_name, post_type, player, message, sub_type }, displ
         case 'message':
             msg += getMessageMessage(player.nickname, sub_type, message);
             break;
+        default:
+            logger.info(`服务器 ${displayServerName} 的未知的上报类型 ${post_type}`);
+            break;
     }
 
     return msg;

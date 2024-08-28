@@ -121,7 +121,8 @@ export class Main extends plugin {
             api: "broadcast",
             data: {
               message: messages,
-            }
+            },
+            echo: "1"
           }));
 
           if (debug_mode) {

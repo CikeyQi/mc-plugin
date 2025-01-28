@@ -91,9 +91,9 @@ export class Main extends plugin {
             msg = {type: "text", data: { text: element.text.replace("\r", "").replace("\n", "\n * "), color: "white" }};
           } else if (element.type === 'image') {
             if (mc_qq_chat_image_enable) {
-              msg = {type:"text", data: { text: `[[CICode,url=${element.url},name=图片]]` }};
+              msg = {type:"text", data: { text: `[图片]`, color: "aqua", hover_event: { action: "show_text", value: `[[CICode,url=${element.url},name=图片]]` } }};
             } else {
-              msg = {type:"text", data: { text: `[图片]`, color: "aqua", click_event: { action: "open_url", value: element.url } }};
+              msg = {type:"text", data: { text: `[图片]`, color: "aqua", hover_event: { action: "show_text", value: element.url }, click_event: { action: "open_url", value: element.url } }};
             }
           } else {
             msg = {type:"text", data:{ text: element.text || "" }}

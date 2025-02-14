@@ -18,7 +18,16 @@ const getMessageMessage = (nickname, sub_type, msg) => {
         return `${nickname} 使用命令 ${msg}`;
 }
 
-const getMessage = ({ server_name, post_type, player, message, sub_type }, displayServerName) => {
+const getMessage = ({
+                        server_name,
+                        server_version,
+                        server_type,
+                        event_name,
+                        post_type,
+                        player,
+                        message,
+                        sub_type
+                    }, displayServerName) => {
     let msg = displayServerName ? `[${server_name}] ` : "";
 
     switch (post_type) {
@@ -37,14 +46,14 @@ const getMessage = ({ server_name, post_type, player, message, sub_type }, displ
 }
 
 export default function sendMsg(message) {
-    const { mc_qq_display_server_name, mc_qq_server_list } = Config.getConfig();
+    const {mc_qq_display_server_name, mc_qq_server_list} = Config.getConfig();
     const jsonMsg = JSON.parse(message);
     let msg = getMessage(jsonMsg, mc_qq_display_server_name);
 
-    const serverConfig = mc_qq_server_list.find(({ server_name }) => server_name === jsonMsg.server_name);
+    const serverConfig = mc_qq_server_list.find(({server_name}) => server_name === jsonMsg.server_name);
 
     if (serverConfig) {
-        const { bot_self_id, group_list, mask_word } = serverConfig;
+        const {bot_self_id, group_list, mask_word} = serverConfig;
 
         msg = msg.replace(new RegExp(mask_word, "g"), '');
 

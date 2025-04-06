@@ -245,6 +245,7 @@ export function supportGuoba() {
                 label: "开启同步群组列表",
                 bottomHelpMessage: "此群组将与当前服务器同步消息",
                 component: "GTags",
+                required: true,
                 componentProps: {
                   placeholder: '请输入群组ID',
                   allowAdd: true,
@@ -266,6 +267,7 @@ export function supportGuoba() {
                 label: "推送机器人列表",
                 bottomHelpMessage: "将使用此机器人向群组发送消息",
                 component: "GTags",
+                required: true,
                 componentProps: {
                   placeholder: '请输入机器人ID',
                   allowAdd: true,
@@ -297,6 +299,7 @@ export function supportGuoba() {
                 label: "可用指令的用户",
                 bottomHelpMessage: "请输入可用指令的用户ID",
                 component: "GTags",
+                required: true,
                 componentProps: {
                   placeholder: '请输入可用指令的用户ID',
                   allowAdd: true,

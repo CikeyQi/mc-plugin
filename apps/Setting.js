@@ -65,17 +65,17 @@ export class Setting extends plugin {
 
     if (e.msg.includes('开启')) {
 
-      if (!server.group_list.some(group => group == e.group_id)) {
+      // "??=" 的意思是若前面的变量不存在( undefind )则赋为后面的值
+      server.group_list ??= [];
+      server.bot_self_id ??= [];
+
+      // 逻辑语法，"||" 的意思是前面为假才运行后面判断是否为真，在这里是需要前面为假时运行后面，刚好合适
+      server.group_list.some(g => g === e.group_id.toString()) ||
         server.group_list.push(e.group_id.toString());
-      }
+      server.bot_self_id.some(id => id === e.self_id.toString()) ||
+        server.bot_self_id.push(e.self_id.toString());
 
-      if (!server.bot_self_id.some(id => id == e.self_id)) {
-        server.bot_self_id.push(e.self_id.toString())
-      }
-
-      if (!server.rcon_able) {
-        server.rcon_able = true;
-      }
+      server.rcon_able = true; // 这里其实用不到判断原值是啥
 
       await e.reply(`本群已开启与${server_name}的同步`);
 

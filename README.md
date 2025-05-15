@@ -22,11 +22,7 @@ git clone https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
 ```
 
 > [!NOTE]
-> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://mirror.ghproxy.com/) 提供的文件代理加速下载服务
->
-> ```
-> git clone https://mirror.ghproxy.com/https://github.com/CikeyQi/mc-plugin.git ./plugins/mc-plugin
-> ```
+> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://ghproxy.link/) 提供的文件代理加速下载服务
 
 #### 2. 安装依赖
 
@@ -53,7 +49,7 @@ pnpm install --filter=mc-plugin
 - [x] 特殊消息支持
 - [x] 多服务器连接
 - [x] 断线自动重连
-- [x] 正向 / 反向 WebSocket连接
+- [x] 正向 / 反向 WebSocket 连接
 - [x] 使用 [@kitUIN/ChatImage](https://github.com/kitUIN/ChatImage) 在游戏内显示图片
 
 ## 常见问题
@@ -61,7 +57,7 @@ pnpm install --filter=mc-plugin
 1. 什么环境才能使用本插件？
    - 需要机器人所在服务器和 Minecraft 服务器任意一个可以被另一个访问（在同一内网或至少其中一个有公网）
 2. 支持哪些服务端？
-   - `Spigot端`，`Velocity端`，`Fabric端`，`Forge端` 均支持
+   - `Spigot端`，`Velocity端`，`Fabric端`，`Forge端`，`NeoForge` 均支持
 
 ## 支持与贡献
 

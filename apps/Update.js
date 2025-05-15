@@ -15,7 +15,7 @@ let uping = false
 export class Update extends plugin {
   constructor () {
     super({
-      name: 'MC_QQ-更新插件',
+      name: 'MCQQ-更新插件',
       event: 'message',
       priority: 1009,
       rule: [

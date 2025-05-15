@@ -1,18 +1,21 @@
 import plugin from "../../../lib/plugins/plugin.js";
-import RconClient from "../components/Rcon.js";
-import WebSocketCilent from "../components/WebSocket.js";
+import RconManager from "../components/Rcon.js";
+import WebSocketManager from "../components/WebSocket.js";
 import Config from "../components/Config.js";
+
+const LOG_PREFIX_CLIENT = logger.blue('[Minecraft Client] ');
+const LOG_PREFIX_RCON = logger.blue('[Minecraft RCON] ');
+const LOG_PREFIX_WS = logger.blue('[Minecraft WebSocket] ');
 
 export class Title extends plugin {
   constructor() {
     super({
-      name: "MC_QQ-Title",
-      dsc: "标题发送标题",
+      name: "MCQQ-发送标题",
       event: "message",
       priority: 1008,
       rule: [
         {
-          reg: "#?mcst",
+          reg: "#?mct (.*)",
           fnc: "title",
         },
       ],
@@ -20,148 +23,71 @@ export class Title extends plugin {
   }
 
   async title(e) {
-    if (!e.group_id) return false;
-    const {
-      mc_qq_server_list,
-      debug_mode,
-    } = await Config.getConfig();
-    const { servers } = RconClient;
-    const { connections } = WebSocketCilent;
+    if (!e.isGroup) {
+      return false;
+    }
 
-    if (!mc_qq_server_list.length) return false;
+    const globalConfig = await Config.getConfig();
+    const { mc_qq_server_list: serverList, debug_mode: debugMode } = globalConfig;
 
-    const serversList = mc_qq_server_list.filter((server) =>
-      server.group_list.some((group) => group == e.group_id)
+    if (!serverList || serverList.length === 0) {
+      if (debugMode) logger.info(LOG_PREFIX_CLIENT + '无服务器配置，跳过同步');
+      return false;
+    }
+
+    const targetServers = serverList.filter(serverCfg =>
+      serverCfg.group_list?.some(groupId => groupId == e.group_id)
     );
 
-    serversList.forEach(async (serverConfig, i) => {
-      if (
-        !servers[serverConfig.server_name] &&
-        !connections[serverConfig.server_name]
-      ) {
-        if (debug_mode) {
-          logger.mark(
-            logger.blue("[Minecraft Client] ") +
-              logger.green(serverConfig.server_name) +
-              " 未连接"
-          );
+    if (targetServers.length === 0) {
+      if (debugMode) logger.info(LOG_PREFIX_CLIENT + `群 ${e.group_id} 未关联任何服务器，跳过同步`);
+      return false;
+    }
+
+    for (const serverCfg of targetServers) {
+      const serverName = serverCfg.server_name;
+      const rconConnection = RconManager.activeConnections?.[serverName];
+      const wsConnection = WebSocketManager.activeSockets?.[serverName];
+
+      if (!rconConnection && !wsConnection) {
+        if (debugMode) {
+          logger.mark(LOG_PREFIX_CLIENT + logger.yellow(serverName) + ' 未连接 (RCON 和 WebSocket 均不可用)');
         }
-        return false;
+        continue;
       }
 
-      if (
-        e.raw_message.startsWith(serverConfig.command_header) &&
-        (serverConfig.command_user?.some((user) => user == e.user_id) ||
-          e.isMaster)
-      ) {
-        if (!servers[serverConfig.server_name]) {
-          await e.reply(
-            `${serverConfig.server_name} 未连接，无法执行服务器命令`
-          );
-          return false;
-        }
+      const [, message] = e.msg.match(this.rule[0].reg);
 
-        const firstNewlineIndex = e.raw_message.indexOf('\n');
-
-        let firstPart = e.raw_message;
-        let secondPart = '';
-
-        if (firstNewlineIndex !== -1) {
-          firstPart = e.raw_message.substring(0, firstNewlineIndex);
-          secondPart = e.raw_message.substring(firstNewlineIndex + 1);
-        }
-
-        let response = await servers[serverConfig.server_name].send(
-          `${e.raw_message.replace(serverConfig.command_header, "")}`
-        );
-
-        if (debug_mode) {
-          logger.mark(
-            logger.blue("[Minecraft RCON Client] ") +
-              "向 " +
-              logger.green(serverConfig.server_name) +
-              " 发送命令 " +
-              e.raw_message.replace(serverConfig.command_header, "")
-          );
-        }
-
-        if (response) {
-          const mask_word = serverConfig.mask_word;
-          response = response.replace(new RegExp(mask_word, "g"), "");
-
-          await e.reply(response);
-          if (debug_mode) {
-            logger.mark(
-              logger.blue("[Minecraft RCON Client] ") +
-                logger.green(serversList[i].server_name) +
-                " 返回消息 " +
-                response
-            );
+      if (wsConnection) {
+        const wsPayload = JSON.stringify({
+          api: "send_title",
+          data: { title: message },
+          echo: String(Date.now())
+        });
+        try {
+          wsConnection.send(wsPayload);
+          if (debugMode) {
+            logger.mark(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息 (WebSocket): ${message}`);
           }
+        } catch (error) {
+          if (debugMode) logger.error(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息失败 (WebSocket): ${error.message}`);
+          if (rconConnection) {
+            if (debugMode) logger.info(LOG_PREFIX_WS + `WebSocket发送失败，尝试使用RCON发送到 ${serverName}`);
+            const response = await rconConnection.send(`title @a title {"text":"${message}"}`);
+            if (response === null && debugMode) {
+              logger.warn(LOG_PREFIX_RCON + `title 命令发送到 ${logger.green(serverName)} 失败或无响应`);
+            }
+          }
+        }
+      } else if (rconConnection) {
+        const response = await rconConnection.send(`title @a title {"text":"${message}"}`);
+        if (response === null && debugMode) {
+          logger.warn(LOG_PREFIX_RCON + `title 命令发送到 ${logger.green(serverName)} 失败或无响应`);
         }
       } else {
-        let title = [
-          {
-            type: "text",
-            data: {
-              text: firstPart
-            },
-          },
-        ];
-
-        let subtitle = [
-            {
-              type: "text",
-              data: {
-                text: secondPart
-              },
-            },
-        ]
-
-        if (!connections[serverConfig.server_name]) {
-          let text = messages.map((msg) => msg.text).join("");
-
-          servers[serverConfig.server_name].send(
-            `title @a title ${firstPart}`
-          );
-          servers[serverConfig.server_name].send(
-            `title @a subtitle ${secondPart}`
-          );
-
-          if (debug_mode) {
-            logger.mark(
-              logger.blue("[Minecraft RCON Client] ") +
-                "向 " +
-                logger.green(serverConfig.server_name) +
-                " 发送消息 " +
-                text
-            );
-          }
-        } else {
-          connections[serverConfig.server_name].send(
-            JSON.stringify({
-              api: "send_title",
-              data: {
-                title: title,
-                subtitle: subtitle,
-              },
-              echo: "1",
-            })
-          );
-
-          if (debug_mode) {
-            logger.mark(
-              logger.blue("[Minecraft WebSocket] ") +
-                "向 " +
-                logger.green(serverConfig.server_name) +
-                " 发送消息 " +
-                messages
-            );
-          }
-        }
+        if (debugMode) logger.warn(LOG_PREFIX_CLIENT + `${serverName} 无可用连接方式 (WebSocket/RCON) 来同步聊天消息`);
       }
-    });
-
-    return false;
+    }
+    return true;
   }
 }

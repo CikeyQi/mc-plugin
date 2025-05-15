@@ -7,9 +7,7 @@ export class help extends plugin {
     constructor() {
         super({
             /** 功能名称 */
-            name: 'QQ_MC',
-            /** 功能描述 */
-            dsc: 'MC插件帮助',
+            name: 'MCQQ-插件帮助',
             event: 'message',
             /** 优先级，数字越小等级越高 */
             priority: 1009,
@@ -47,18 +45,38 @@ export class help extends plugin {
                     },
                     {
                         "icon": 2,
-                        "title": "#mc开启同步+服务器名称",
+                        "title": "#mc开启同步<服务器名称>",
                         "desc": "将当前群聊与指定服务器同步"
                     },
                     {
                         "icon": 3,
-                        "title": "#mc关闭同步+服务器名称",
+                        "title": "#mc关闭同步<服务器名称>",
                         "desc": "关闭当前群聊与服务器同步"
                     },
                     {
                         "icon": 4,
                         "title": "#mc重连",
                         "desc": "手动重连服务器"
+                    },
+                    {
+                        "icon": 5,
+                        "title": "#mcab <文本>",
+                        "desc": "发送动作栏标题"
+                    },
+                    {
+                        "icon": 6,
+                        "title": "#mcp <文本>",
+                        "desc": "发送私聊消息"
+                    },
+                    {
+                        "icon": 7,
+                        "title": "#mct <文本>",
+                        "desc": "发送标题"
+                    },
+                    {
+                        "icon": 8,
+                        "title": "#mcst <文本>",
+                        "desc": "发送子标题"
                     }
                 ],
             }

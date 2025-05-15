@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import Init from './model/init.js';
 
 if (!global.segment) {
   global.segment = (await import("oicq")).segment;

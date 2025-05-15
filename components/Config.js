@@ -1,17 +1,19 @@
 import YAML from 'yaml'
 import fs from 'fs'
 import { pluginRoot } from '../model/path.js'
-import Log from '../utils/logs.js'
+
+const LOG_PREFIX_CONFIG = logger.blue('[Minecraft Config] ');
 
 class Config {
+
   getConfig() {
     try {
       const config_data = YAML.parse(
         fs.readFileSync(`${pluginRoot}/config/config/config.yaml`, 'utf-8')
       )
       return config_data
-    } catch (err) {
-      Log.e('读取config.yaml失败', err)
+    } catch (error) {
+      logger.mark(LOG_PREFIX_CONFIG + ' 读取 config.yaml 失败' + error.message)
       return false
     }
   }
@@ -22,8 +24,8 @@ class Config {
         fs.readFileSync(`${pluginRoot}/config/config_default.yaml`, 'utf-8')
       )
       return config_default_data
-    } catch (err) {
-      Log.e('读取config_default.yaml失败', err)
+    } catch (error) {
+      logger.mark(LOG_PREFIX_CONFIG + ' 读取 config_default.yaml 失败' + error.message)
       return false
     }
   }
@@ -35,8 +37,8 @@ class Config {
         YAML.stringify(config_data),
       )
       return true
-    } catch (err) {
-      Log.e('写入config.yaml失败', err)
+    } catch (error) {
+      logger.mark(LOG_PREFIX_CONFIG + ' 写入 config.yaml 失败' + error.message)
       return false
     }
   }

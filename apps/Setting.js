@@ -1,16 +1,13 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import WebSocket from '../components/WebSocket.js'
-import RconClient from '../components/Rcon.js'
+import RconManager from '../components/Rcon.js'
 import Config from '../components/Config.js'
-import Init from '../model/init.js'
 
 export class Setting extends plugin {
   constructor() {
     super({
       /** 功能名称 */
-      name: 'MC_QQ-设置',
-      /** 功能描述 */
-      dsc: '设置插件',
+      name: 'MCQQ-设置同步',
       event: 'message',
       /** 优先级，数字越小等级越高 */
       priority: 1009,
@@ -84,8 +81,8 @@ export class Setting extends plugin {
   async reconnect(e) {
     await e.reply('正在重连全部已掉线服务器，请稍后...')
 
-    await WebSocket.connectWebSocket()
-    await RconClient.initRconClient()
+    await WebSocket._initializeAsync()
+    await RconManager._initializeConnectionsAsync()
 
     return true
   }

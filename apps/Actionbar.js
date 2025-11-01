@@ -1,10 +1,8 @@
 import plugin from "../../../lib/plugins/plugin.js";
-import RconManager from "../components/Rcon.js";
 import WebSocketManager from "../components/WebSocket.js";
 import Config from "../components/Config.js";
 
 const LOG_PREFIX_CLIENT = logger.blue('[Minecraft Client] ');
-const LOG_PREFIX_RCON = logger.blue('[Minecraft RCON] ');
 const LOG_PREFIX_WS = logger.blue('[Minecraft WebSocket] ');
 
 export class ActionBar extends plugin {
@@ -46,12 +44,11 @@ export class ActionBar extends plugin {
 
     for (const serverCfg of targetServers) {
       const serverName = serverCfg.server_name;
-      const rconConnection = RconManager.activeConnections?.[serverName];
       const wsConnection = WebSocketManager.activeSockets?.[serverName];
 
-      if (!rconConnection && !wsConnection) {
+      if (!wsConnection) {
         if (debugMode) {
-          logger.mark(LOG_PREFIX_CLIENT + logger.yellow(serverName) + ' 未连接 (RCON 和 WebSocket 均不可用)');
+          logger.mark(LOG_PREFIX_CLIENT + logger.yellow(serverName) + ' 未连接 (WebSocket 不可用)');
         }
         continue;
       }
@@ -71,21 +68,9 @@ export class ActionBar extends plugin {
           }
         } catch (error) {
           if (debugMode) logger.error(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息失败 (WebSocket): ${error.message}`);
-          if (rconConnection) {
-            if (debugMode) logger.info(LOG_PREFIX_WS + `WebSocket发送失败，尝试使用RCON发送到 ${serverName}`);
-            const response = await rconConnection.send(`title @a actionbar {"text":"${message}"}`);
-            if (response === null && debugMode) {
-              logger.warn(LOG_PREFIX_RCON + `title 命令发送到 ${logger.green(serverName)} 失败或无响应`);
-            }
-          }
-        }
-      } else if (rconConnection) {
-        const response = await rconConnection.send(`title @a actionbar {"text":"${message}"}`);
-        if (response === null && debugMode) {
-          logger.warn(LOG_PREFIX_RCON + `title 命令发送到 ${logger.green(serverName)} 失败或无响应`);
         }
       } else {
-        if (debugMode) logger.warn(LOG_PREFIX_CLIENT + `${serverName} 无可用连接方式 (WebSocket/RCON) 来同步聊天消息`);
+        if (debugMode) logger.warn(LOG_PREFIX_CLIENT + `${serverName} 无可用连接方式 (WebSocket) 来同步聊天消息`);
       }
     }
     return true;

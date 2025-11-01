@@ -1,6 +1,5 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import WebSocket from '../components/WebSocket.js'
-import RconManager from '../components/Rcon.js'
 import Config from '../components/Config.js'
 
 export class Setting extends plugin {
@@ -65,12 +64,10 @@ export class Setting extends plugin {
     if (isEnable) {
       server.group_list = [...new Set([...(server.group_list || []), e.group_id.toString()])]
       server.bot_self_id = [...new Set([...(server.bot_self_id || []), e.self_id.toString()])]
-      server.rcon_able = true
       await e.reply(`✅ 已开启与 ${server_name} 的同步`)
     } else {
       server.group_list = (server.group_list || []).filter(g => g !== e.group_id.toString())
       server.bot_self_id = (server.bot_self_id || []).filter(id => id !== e.self_id.toString())
-      server.rcon_able = !!server.group_list.length
       await e.reply(`⛔ 已关闭与 ${server_name} 的同步`)
     }
 
@@ -82,7 +79,6 @@ export class Setting extends plugin {
     await e.reply('正在重连全部已掉线服务器，请稍后...')
 
     await WebSocket._initializeAsync()
-    await RconManager._initializeConnectionsAsync()
 
     return true
   }

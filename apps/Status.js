@@ -1,6 +1,5 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import WebSocket from '../components/WebSocket.js'
-import RconManager from '../components/Rcon.js'
 import Config from '../components/Config.js'
 
 export class Status extends plugin {
@@ -25,7 +24,6 @@ export class Status extends plugin {
   async status(e) {
     try {
       const activeSockets = WebSocket.activeSockets
-      const activeConnections = RconManager.activeConnections
       const config = await Config.getConfig().mc_qq_server_list
 
       let msg = `当前连接状态：\n`
@@ -33,8 +31,7 @@ export class Status extends plugin {
       config.forEach(async (item) => {
         msg += '\n';
         msg += `┌ 服务器名称：${item.server_name}\n`;
-        msg += `├ WebSocket连接状态：${activeSockets[item.server_name] ? '已连接' : '未连接'}\n`;
-        msg += `└ Rcon连接状态：${item.rcon_able ? (activeConnections[item.server_name] ? '已连接' : '未连接') : '已关闭'}\n`;
+        msg += `├ 连接状态：${activeSockets[item.server_name] ? '已连接' : '未连接'}\n`;
       })
 
       await e.reply(msg)

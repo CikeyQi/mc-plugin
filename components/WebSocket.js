@@ -1,6 +1,7 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import Config from './Config.js';
 import processAndSend from './SendMsg.js';
+import { handleResponse } from '../apps/Response.js';
 
 const WS_LOG_PREFIX = logger.blue('[Minecraft WebSocket] ');
 
@@ -91,7 +92,18 @@ class WebSocketManager {
                             ' 收到消息：' + message
                         );
                     }
-                    processAndSend(message.toString());
+                    let msgObj;
+                    try {
+                        msgObj = JSON.parse(message.toString());
+                    } catch (err) {
+                        logger.error(WS_LOG_PREFIX + '消息解析失败: ' + err.message + '，内容: ' + message);
+                        return;
+                    }
+                    if (msgObj.post_type === 'response' && msgObj.echo) {
+                        handleResponse(msgObj.echo, msgObj);
+                    } else {
+                        processAndSend(message.toString());
+                    }
                 });
 
                 ws.on('close', (code, reason) => {

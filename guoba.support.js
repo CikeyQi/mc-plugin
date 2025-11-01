@@ -177,63 +177,6 @@ export function supportGuoba() {
               },
               {
                 component: "Divider",
-                label: "Rcon 相关配置",
-                componentProps: {
-                  orientation: "left",
-                  plain: true,
-                },
-              },
-              {
-                field: "rcon_able",
-                label: "是否启用Rcon",
-                bottomHelpMessage: "若需要向服务器发送指令，请启用Rcon",
-                component: "Switch",
-              },
-              {
-                field: "rcon_host",
-                label: "Rcon地址",
-                bottomHelpMessage: "请输入Rcon地址",
-                component: "Input",
-                componentProps: {
-                  placeholder: '例：127.0.0.1',
-                },
-              },
-              {
-                field: "rcon_port",
-                label: "Rcon端口",
-                bottomHelpMessage: "请输入Rcon端口",
-                component: "InputNumber",
-                componentProps: {
-                  placeholder: '例：25575',
-                  min: 1,
-                  max: 65535,
-                  step: 1,
-                },
-              },
-              {
-                field: "rcon_password",
-                label: "Rcon密码",
-                bottomHelpMessage: "请输入Rcon密码",
-                component: "InputPassword",
-                componentProps: {
-                  placeholder: '与server.properties中的rcon.password一致',
-                  visible: false,
-                },
-              },
-              {
-                field: "rcon_max_attempts",
-                label: "断连重试次数",
-                bottomHelpMessage: "Rcon 重连最大尝试次数",
-                component: "InputNumber",
-                componentProps: {
-                  placeholder: '例：3',
-                  min: 1,
-                  max: 999999,
-                  step: 1,
-                },
-              },
-              {
-                component: "Divider",
                 label: "群组同步 相关配置",
                 componentProps: {
                   orientation: "left",

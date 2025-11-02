@@ -84,13 +84,18 @@ export class Main extends plugin {
     const echoId = String(Date.now()) + Math.floor(Math.random() * 10000);
     addResponse(echoId, e, 5000);
     const commandJsonData = JSON.stringify({ api: "send_rcon_command", command: command, echo: echoId });
-    wsConnection.send(commandJsonData);
+    try {
+      wsConnection.send(commandJsonData);
+    } catch (err) {
+      e.sendMsg(`向 ${serverName} 发送命令失败: ${err.message || err}`);
+      logger.error(LOG_PREFIX_WS + `发送命令失败: ${err.message || err}`);
+    }
   }
 
   _formatMinecraftMessage(e, globalConfig) {
     const { mc_qq_send_group_name: prefixGroup, mc_qq_say_way: saySuffix, mc_qq_chat_image_enable: imageAsCICode } = globalConfig;
 
-    componentList = [];
+    const componentList = [];
 
     if (prefixGroup) {
       componentList.push({

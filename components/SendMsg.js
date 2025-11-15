@@ -5,15 +5,15 @@ const formatMsg = (jsonData, showServer) => {
     const nickname = jsonData.player?.nickname;
 
     const messageHandlers = {
-        'join': () => `${nickname} 加入了游戏`,
-        'quit': () => `${nickname} 退出了游戏`,
-        'death': () => jsonData.message,
-        'player_command': () => `${nickname} 使用命令 ${jsonData.message}`,
-        'achievement': () => {
-            if (!jsonData.advancement?.display?.title) return null;
+        'player_join': () => `${nickname} 加入了游戏`,
+        'player_quit': () => `${nickname} 退出了游戏`,
+        'player_death': () => jsonData.death.message,
+        'player_command': () => `${nickname} 使用命令 ${jsonData.command}`,
+        'player_achievement': () => {
+            if (jsonData.advancement?.text) return jsonData.advancement.text;
             return `${nickname} 达成了进度 ${jsonData.advancement.display.title}`;
         },
-        'chat': () => {
+        'player_chat': () => {
             const { mc_qq_say_way: sayConnector } = Config.getConfig();
             return `${nickname} ${sayConnector} ${jsonData.message}`;
         }

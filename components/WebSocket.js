@@ -1,13 +1,14 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import Config from './Config.js';
 import processAndSend from './SendMsg.js';
-import { handleResponse } from '../apps/Response.js';
+import { handleResponse } from './Response.js';
 
 const WS_LOG_PREFIX = logger.blue('[Minecraft WebSocket] ');
 
 class WebSocketManager {
 
     constructor() {
+        this.wsServer = null;
         this.activeSockets = {};
         this._initializeAsync();
     }
@@ -20,7 +21,7 @@ class WebSocketManager {
                 return;
             }
 
-            if (config.mc_qq_ws_server) {
+            if (config.mc_qq_ws_server && this.wsServer === null) {
                 this._startLocalServer(config);
             }
 
@@ -89,7 +90,8 @@ class WebSocketManager {
                         logger.mark(
                             WS_LOG_PREFIX +
                             logger.green(remoteName) +
-                            ' 收到消息：' + message
+                            ' 收到消息：' +
+                            logger.green(message.toString())
                         );
                     }
                     let msgObj;
@@ -134,7 +136,12 @@ class WebSocketManager {
 
         wss.on('error', (error) => {
             logger.error(WS_LOG_PREFIX + `本地服务器错误: ${error.message}`);
+            wss.removeAllListeners();
+            wss.close();
+            this.wsServer = null;
         });
+
+        this.wsServer = wss;
     }
 
     _connectToRemoteServers(config) {
@@ -185,7 +192,18 @@ class WebSocketManager {
                     logger.green(message.toString())
                 );
             }
-            processAndSend(message.toString());
+            let msgObj;
+            try {
+                msgObj = JSON.parse(message.toString());
+            } catch (err) {
+                logger.error(WS_LOG_PREFIX + '消息解析失败: ' + err.message + '，内容: ' + message);
+                return;
+            }
+            if (msgObj.post_type === 'response' && msgObj.echo) {
+                handleResponse(msgObj.echo, msgObj);
+            } else {
+                processAndSend(message.toString());
+            }
         });
 
         ws.on('close', (code, reason) => {

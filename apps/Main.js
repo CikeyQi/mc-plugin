@@ -1,6 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import WebSocketManager from '../components/WebSocket.js';
-import { addResponse } from './Response.js';
+import { addResponse } from '../components/Response.js';
 import Config from '../components/Config.js';
 
 const LOG_PREFIX_CLIENT = logger.blue('[Minecraft Client] ');
@@ -83,7 +83,7 @@ export class Main extends plugin {
     }
     const echoId = String(Date.now()) + Math.floor(Math.random() * 10000);
     addResponse(echoId, e, 5000);
-    const commandJsonData = JSON.stringify({ api: "send_rcon_command", command: command, echo: echoId });
+    const commandJsonData = JSON.stringify({ api: "send_rcon_command", data: { command }, echo: echoId });
     try {
       wsConnection.send(commandJsonData);
     } catch (err) {
@@ -171,7 +171,7 @@ export class Main extends plugin {
       try {
         wsConn.send(wsPayload);
         if (debugMode) {
-          logger.mark(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息 (WebSocket): ${message}`);
+          logger.mark(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息 (WebSocket): ${JSON.stringify(message)}`);
         }
       } catch (error) {
         if (debugMode) logger.error(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息失败 (WebSocket): ${error.message}`);

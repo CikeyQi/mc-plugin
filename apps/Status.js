@@ -31,7 +31,7 @@ export class Status extends plugin {
       config.forEach(async (item) => {
         msg += '\n';
         msg += `┌ 服务器名称：${item.server_name}\n`;
-        msg += `├ 连接状态：${activeSockets[item.server_name] ? '已连接' : '未连接'}\n`;
+        msg += `└ 连接状态：${activeSockets[item.server_name] ? '已连接' : '未连接'}\n`;
       })
 
       await e.reply(msg)

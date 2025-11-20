@@ -1,6 +1,6 @@
 {
   "name": "mc-plugin",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "基于Yunzai-Bot的与Minecraft Server互通消息的插件",
   "main": "index.js",
   "scripts": {

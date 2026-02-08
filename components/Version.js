@@ -13,6 +13,7 @@ const getLine = function (line) {
 }
 
 const yunzaiVersion = packageJson.version
+const currentVersion = packageJson.version
 const isMiao = packageJson.name === 'miao-yunzai'
 const isTrss = Array.isArray(Bot.uin) ? true : false
 

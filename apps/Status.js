@@ -13,7 +13,7 @@ export class Status extends plugin {
       rule: [
         {
           /** 命令正则匹配 */
-          reg: '#?mc状态$',
+          reg: '#?mc(状态| status)$',
           /** 执行方法 */
           fnc: 'status',
         }
@@ -24,11 +24,12 @@ export class Status extends plugin {
   async status(e) {
     try {
       const activeSockets = WebSocket.activeSockets
-      const config = await Config.getConfig().mc_qq_server_list
+      const config = Config.getConfig()
+      const serverList = Array.isArray(config?.mc_qq_server_list) ? config.mc_qq_server_list : []
 
       let msg = `当前连接状态：\n`
 
-      config.forEach(async (item) => {
+      serverList.forEach((item) => {
         msg += '\n';
         msg += `┌ 服务器名称：${item.server_name}\n`;
         msg += `└ 连接状态：${activeSockets[item.server_name] ? '已连接' : '未连接'}\n`;

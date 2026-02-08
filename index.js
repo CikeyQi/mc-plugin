@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import Init from './model/init.js';
+import { pluginRoot } from './model/path.js';
 
 if (!global.segment) {
   global.segment = (await import("oicq")).segment;
@@ -9,8 +11,9 @@ let ret = [];
 
 logger.info(logger.yellow("- 正在载入 MC-PLUGIN"));
 
+const appsDir = path.join(pluginRoot, 'apps');
 const files = fs
-  .readdirSync('./plugins/mc-plugin/apps')
+  .readdirSync(appsDir)
   .filter((file) => file.endsWith('.js'));
 
 files.forEach((file) => {

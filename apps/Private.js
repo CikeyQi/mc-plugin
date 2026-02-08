@@ -1,14 +1,12 @@
 import plugin from "../../../lib/plugins/plugin.js";
-import WebSocketManager from "../components/WebSocket.js";
-import Config from "../components/Config.js";
-
-const LOG_PREFIX_CLIENT = logger.blue('[Minecraft Client] ');
-const LOG_PREFIX_WS = logger.blue('[Minecraft WebSocket] ');
+import { withConnectedServers } from '../services/groupDispatch.js';
+import { createEchoId, sendWsPayload } from '../services/wsSender.js';
+import { toTextComponentArray } from '../components/messages/textComponent.js';
 
 export class Private extends plugin {
   constructor() {
     super({
-      name: "MCQQ-发送私聊消息",
+      name: "MCQQ-私聊消息",
       event: "message",
       priority: 1008,
       rule: [
@@ -25,50 +23,29 @@ export class Private extends plugin {
       return false;
     }
 
-    const globalConfig = await Config.getConfig();
-    const { mc_qq_server_list: serverList, debug_mode: debugMode } = globalConfig;
+    const content = e.msg ?? '';
+    const match = content.match(this.rule[0].reg);
+    if (!match) return false;
 
-    if (!serverList || serverList.length === 0) {
-      if (debugMode) logger.info(LOG_PREFIX_CLIENT + '无服务器配置，跳过同步');
-      return false;
+    const nickname = match[1]?.trim();
+    const message = match[2]?.trim();
+
+    if (!nickname || !message) {
+      await e.reply('请输入正确的私聊格式: #mcp <玩家> <内容>');
+      return true;
     }
 
-    const targetServers = serverList.filter(serverCfg =>
-      serverCfg.group_list?.some(groupId => groupId == e.group_id)
-    );
+    const messageComponents = toTextComponentArray(message, 'white');
 
-    if (targetServers.length === 0) {
-      if (debugMode) logger.info(LOG_PREFIX_CLIENT + `群 ${e.group_id} 未关联任何服务器，跳过同步`);
-      return false;
-    }
+    await withConnectedServers(e, async ({ serverName, wsConnection, debugMode }) => {
+      const payload = {
+        api: 'send_private_msg',
+        data: { nickname, message: messageComponents },
+        echo: createEchoId()
+      };
+      sendWsPayload(wsConnection, serverName, payload, debugMode, message);
+    });
 
-    for (const serverCfg of targetServers) {
-      const serverName = serverCfg.server_name;
-      const wsConnection = WebSocketManager.activeSockets?.[serverName];
-
-      if (!wsConnection) {
-        if (debugMode) {
-          logger.mark(LOG_PREFIX_CLIENT + logger.yellow(serverName) + ' 未连接 (WebSocket 不可用)');
-        }
-        continue;
-      }
-
-      const [, nickname, message] = e.msg.match(this.rule[0].reg);
-
-      const wsPayload = JSON.stringify({
-        api: "send_private_msg",
-        data: { nickname: nickname, message: message },
-        echo: String(Date.now())
-      });
-      try {
-        wsConnection.send(wsPayload);
-        if (debugMode) {
-          logger.mark(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息 (WebSocket): ${message}`);
-        }
-      } catch (error) {
-        if (debugMode) logger.error(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息失败 (WebSocket): ${error.message}`);
-      }
-    }
     return true;
   }
 }

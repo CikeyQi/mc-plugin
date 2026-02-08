@@ -1,6 +1,7 @@
 import Version from './Version.js'
 import { pluginRoot } from '../model/path.js'
 import fs from 'fs'
+import path from 'path'
 
 function scale(pct = 1) {
     let scale = 100
@@ -10,10 +11,10 @@ function scale(pct = 1) {
 }
 
 const Render = {
-    async render(path, params, cfg) {
+    async render(tplPath, params, cfg) {
         let { e } = cfg
         if (!e.runtime) {
-            console.log('未找到e.runtime，请升级至最新版Yunzai')
+            logger.warn('未找到e.runtime，请升级至最新版Yunzai')
         }
 
         let BotName = Version.isMiao ? 'Miao-Yunzai' : 'Yunzai-Bot'
@@ -25,9 +26,9 @@ const Render = {
                 currentVersion = package_json.version
             }
         } catch (err) {
-            console.log('读取package.json失败', err)
+            logger.warn('读取package.json失败', err)
         }
-        return e.runtime.render('mc-plugin', path, params, {
+        return e.runtime.render('mc-plugin', tplPath, params, {
             retType: cfg.retMsgId ? 'msgId' : 'default',
             beforeRender({ data }) {
                 let pluginName = ''
@@ -38,7 +39,7 @@ const Render = {
                     }
                 }
                 let resPath = data.pluResPath
-                const layoutPath = process.cwd() + '/plugins/mc-plugin/resources/common/layout/'
+                const layoutPath = path.join(pluginRoot, 'resources', 'common', 'layout') + path.sep
                 return {
                     ...data,
                     _res_path: resPath,

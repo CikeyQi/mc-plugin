@@ -71,7 +71,11 @@ export class Setting extends plugin {
       await e.reply(`⛔ 已关闭与 ${server_name} 的同步`)
     }
 
-    Config.setConfig(config);
+    const saved = Config.setConfig(config);
+    if (!saved) {
+      await e.reply('保存配置失败，请检查文件权限');
+      return true;
+    }
     return true
   }
 

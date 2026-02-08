@@ -14,7 +14,7 @@ export class help extends plugin {
             rule: [
                 {
                     /** 命令正则匹配 */
-                    reg: '^#?mc帮助$',
+                    reg: '^#?mc(帮助| help)$',
                     /** 执行方法 */
                     fnc: 'sendHelpPic'
                 }

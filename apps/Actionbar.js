@@ -1,14 +1,12 @@
 import plugin from "../../../lib/plugins/plugin.js";
-import WebSocketManager from "../components/WebSocket.js";
-import Config from "../components/Config.js";
-
-const LOG_PREFIX_CLIENT = logger.blue('[Minecraft Client] ');
-const LOG_PREFIX_WS = logger.blue('[Minecraft WebSocket] ');
+import { withConnectedServers } from '../services/groupDispatch.js';
+import { createEchoId, sendWsPayload } from '../services/wsSender.js';
+import { toTextComponentArray } from '../components/messages/textComponent.js';
 
 export class ActionBar extends plugin {
   constructor() {
     super({
-      name: "MCQQ-发送动作栏标题",
+      name: "MCQQ-动作栏消息",
       event: "message",
       priority: 1008,
       rule: [
@@ -25,54 +23,27 @@ export class ActionBar extends plugin {
       return false;
     }
 
-    const globalConfig = await Config.getConfig();
-    const { mc_qq_server_list: serverList, debug_mode: debugMode } = globalConfig;
+    const content = e.msg ?? '';
+    const match = content.match(this.rule[0].reg);
+    if (!match) return false;
 
-    if (!serverList || serverList.length === 0) {
-      if (debugMode) logger.info(LOG_PREFIX_CLIENT + '无服务器配置，跳过同步');
-      return false;
+    const message = match[1]?.trim();
+    if (!message) {
+      await e.reply('请输入要发送的动作栏内容');
+      return true;
     }
 
-    const targetServers = serverList.filter(serverCfg =>
-      serverCfg.group_list?.some(groupId => groupId == e.group_id)
-    );
+    const messageComponents = toTextComponentArray(message, 'aqua');
 
-    if (targetServers.length === 0) {
-      if (debugMode) logger.info(LOG_PREFIX_CLIENT + `群 ${e.group_id} 未关联任何服务器，跳过同步`);
-      return false;
-    }
+    await withConnectedServers(e, async ({ serverName, wsConnection, debugMode }) => {
+      const payload = {
+        api: 'send_actionbar',
+        data: { message: messageComponents },
+        echo: createEchoId()
+      };
+      sendWsPayload(wsConnection, serverName, payload, debugMode, message);
+    });
 
-    for (const serverCfg of targetServers) {
-      const serverName = serverCfg.server_name;
-      const wsConnection = WebSocketManager.activeSockets?.[serverName];
-
-      if (!wsConnection) {
-        if (debugMode) {
-          logger.mark(LOG_PREFIX_CLIENT + logger.yellow(serverName) + ' 未连接 (WebSocket 不可用)');
-        }
-        continue;
-      }
-
-      const [, message] = e.msg.match(this.rule[0].reg);
-
-      if (wsConnection) {
-        const wsPayload = JSON.stringify({
-          api: "send_actionbar",
-          data: { message: message },
-          echo: String(Date.now())
-        });
-        try {
-          wsConnection.send(wsPayload);
-          if (debugMode) {
-            logger.mark(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息 (WebSocket): ${message}`);
-          }
-        } catch (error) {
-          if (debugMode) logger.error(LOG_PREFIX_WS + `向 ${logger.green(serverName)} 发送消息失败 (WebSocket): ${error.message}`);
-        }
-      } else {
-        if (debugMode) logger.warn(LOG_PREFIX_CLIENT + `${serverName} 无可用连接方式 (WebSocket) 来同步聊天消息`);
-      }
-    }
     return true;
   }
 }

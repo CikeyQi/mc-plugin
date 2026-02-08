@@ -7,4 +7,4 @@ mc_qq_display_server_name: true
 mc_qq_say_way: 说：
 mc_qq_chat_image_enable: false
 mc_qq_server_list: []
-debug_mode: true
+debug_mode: false

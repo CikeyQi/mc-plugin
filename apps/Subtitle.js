@@ -1,49 +1,25 @@
-import plugin from "../../../lib/plugins/plugin.js";
-import { withConnectedServers } from '../services/groupDispatch.js';
-import { createEchoId, sendWsPayload } from '../services/wsSender.js';
-import { toTextComponent } from '../components/messages/textComponent.js';
+﻿import plugin from '../../../lib/plugins/plugin.js';
+import mcBridge from '../services/mcBridge.js';
 
 export class Subtitle extends plugin {
   constructor() {
     super({
-      name: "MCQQ-子标题消息",
-      event: "message",
+      name: 'MCQQ-副标题消息',
+      event: 'message',
       priority: 1008,
-      rule: [
-        {
-          reg: "#?mcst (.*)",
-          fnc: "subTitle",
-        },
-      ],
+      rule: [{ reg: '^#?mcst\\s+(.+)$', fnc: 'subTitle' }]
     });
   }
 
   async subTitle(e) {
-    if (!e.isGroup) {
-      return false;
-    }
+    return mcBridge.runGroup(e, this.rule[0].reg, (match) => {
+      const titleText = match[1]?.trim();
+      if (!titleText) return { errorReply: '请输入要发送的副标题内容' };
 
-    const content = e.msg ?? '';
-    const match = content.match(this.rule[0].reg);
-    if (!match) return false;
-
-    const message = match[1]?.trim();
-    if (!message) {
-      await e.reply('请输入要发送的子标题内容');
-      return true;
-    }
-
-    const subtitleComponent = toTextComponent(message, 'white');
-
-    await withConnectedServers(e, async ({ serverName, wsConnection, debugMode }) => {
-      const payload = {
+      return {
         api: 'send_title',
-        data: { subtitle: subtitleComponent },
-        echo: createEchoId()
+        data: { subtitle: { text: titleText, color: 'white' } }
       };
-      sendWsPayload(wsConnection, serverName, payload, debugMode, message);
-    });
-
-    return true;
+    }, '发送副标题');
   }
 }

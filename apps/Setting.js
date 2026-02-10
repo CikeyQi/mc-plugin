@@ -1,89 +1,106 @@
-import plugin from '../../../lib/plugins/plugin.js'
-import WebSocket from '../components/WebSocket.js'
-import Config from '../components/Config.js'
+﻿import plugin from '../../../lib/plugins/plugin.js';
+import Config from '../components/Config.js';
+import mcBridge from '../services/mcBridge.js';
+
+const cleanName = (inputText) => String(inputText || '').trim();
+
+const syncGroup = (serverItem, groupId, selfId, isEnable) => {
+  const groupList = Array.isArray(serverItem.group_list) ? serverItem.group_list.map(String) : [];
+  const botList = Array.isArray(serverItem.bot_self_id) ? serverItem.bot_self_id.map(String) : [];
+
+  if (isEnable) {
+    serverItem.group_list = [...new Set([...groupList, groupId])];
+    serverItem.bot_self_id = [...new Set([...botList, selfId])];
+    return;
+  }
+
+  serverItem.group_list = groupList.filter((item) => item !== groupId);
+  serverItem.bot_self_id = botList.filter((item) => item !== selfId);
+};
 
 export class Setting extends plugin {
   constructor() {
     super({
-      /** 功能名称 */
-      name: 'MCQQ-设置同步',
+      name: 'MCQQ-同步设置',
       event: 'message',
-      /** 优先级，数字越小等级越高 */
       priority: 1009,
       rule: [
         {
-          /** 命令正则匹配 */
           reg: '#?mc(开启|关闭)同步(.*)$',
-          /** 执行方法 */
           fnc: 'setting',
-          /** 主人权限 */
           permission: 'master'
         },
         {
-          /** 命令正则匹配 */
           reg: '#?mc重连$',
-          /** 执行方法 */
           fnc: 'reconnect',
-          /** 主人权限 */
           permission: 'master'
         }
       ]
-    })
+    });
   }
 
   async setting(e) {
-
     if (!e.group_id) {
-      await e.reply('请在群内使用此功能')
-      return true
+      await e.reply('请在群内使用此功能');
+      return true;
     }
 
-    const [_, operation, name] = e.msg.match(this.rule[0].reg)
-    const server_name = name?.trim()
+    const msgMatch = String(e.msg ?? '').match(this.rule[0].reg);
+    const syncAction = msgMatch?.[1] || '';
+    const serverName = cleanName(msgMatch?.[2]);
 
-    if (!server_name) {
-      await e.reply('请输入要同步的服务器名称，如 #mc开启同步Server1')
-      return true
+    if (!serverName) {
+      await e.reply('请输入要同步的服务器名称，例如：#mc开启同步Server1');
+      return true;
     }
 
-    const config = Config.getConfig()
-    if (!config.mc_qq_server_list.length) {
-      await e.reply('请先在配置文件中添加服务器信息')
-      return true
+    const config = Config.getConfig();
+    const serverList = Array.isArray(config?.mc_qq_server_list) ? config.mc_qq_server_list : [];
+    if (!serverList.length) {
+      await e.reply('请先在配置文件中添加服务器信息');
+      return true;
     }
 
-    const index = config.mc_qq_server_list.findIndex(s => s.server_name === server_name)
-    if (index === -1) {
-      await e.reply(`未找到服务器「${server_name}」，发送[#mc状态]查看列表`);
-      return true
-    }
-    const server = config.mc_qq_server_list[index]
-
-    const isEnable = operation === '开启'
-
-    if (isEnable) {
-      server.group_list = [...new Set([...(server.group_list || []), e.group_id.toString()])]
-      server.bot_self_id = [...new Set([...(server.bot_self_id || []), e.self_id.toString()])]
-      await e.reply(`✅ 已开启与 ${server_name} 的同步`)
-    } else {
-      server.group_list = (server.group_list || []).filter(g => g !== e.group_id.toString())
-      server.bot_self_id = (server.bot_self_id || []).filter(id => id !== e.self_id.toString())
-      await e.reply(`⛔ 已关闭与 ${server_name} 的同步`)
+    const serverItem = serverList.find((item) => cleanName(item.server_name) === serverName);
+    if (!serverItem) {
+      await e.reply(`未找到服务器「${serverName}」，发送 #mc状态 查看列表`);
+      return true;
     }
 
-    const saved = Config.setConfig(config);
-    if (!saved) {
+    const isEnable = syncAction === '开启';
+    syncGroup(serverItem, String(e.group_id), String(e.self_id), isEnable);
+
+    if (!Config.setConfig(config)) {
       await e.reply('保存配置失败，请检查文件权限');
       return true;
     }
-    return true
+
+    await e.reply(isEnable
+      ? `已开启与 ${serverName} 的同步`
+      : `已关闭与 ${serverName} 的同步`
+    );
+
+    return true;
   }
 
   async reconnect(e) {
-    await e.reply('正在重连全部已掉线服务器，请稍后...')
+    await e.reply('正在重连全部服务器，请稍后...');
 
-    await WebSocket._initializeAsync()
+    try {
+      await mcBridge.reconnect();
 
-    return true
+      const onlineList = mcBridge.connectedNames();
+      await e.reply(
+        onlineList.length
+          ? `重连完成，当前已连接: ${onlineList.join(', ')}`
+          : '重连完成，当前没有可用连接'
+      );
+    } catch (error) {
+      const errorText = error?.message || 'unknown error';
+      logger.error(`[MC-PLUGIN] 执行重连失败: ${errorText}`);
+      await e.reply(`重连失败: ${errorText}`);
+    }
+
+    return true;
   }
 }

@@ -65,7 +65,7 @@ export class help extends plugin {
                     },
                     {
                         "icon": 6,
-                        "title": "#mcp <文本>",
+                        "title": "#mcp <玩家> <文本>",
                         "desc": "发送私聊消息"
                     },
                     {

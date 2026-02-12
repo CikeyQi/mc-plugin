@@ -222,7 +222,6 @@ class McBridge {
       'heartbeatIntervalMs',
       'heartbeatTimeoutMs',
       'requestTimeoutMs',
-      'echoTimeoutMs',
       'maxPendingRequests',
       'maxPayloadBytes',
       'autoConnect'
@@ -252,11 +251,12 @@ class McBridge {
 
     const reverseOptions = {
       ...pickOptions(config, [
-        'headers',
         'strictHeaders',
         'rejectDuplicateOrigin',
+        'connectTimeoutMs',
+        'heartbeatIntervalMs',
+        'heartbeatTimeoutMs',
         'requestTimeoutMs',
-        'echoTimeoutMs',
         'maxPendingRequests',
         'maxPayloadBytes',
         'autoConnect'
@@ -396,7 +396,49 @@ class McBridge {
     }
   }
 
+  statusOf(client) {
+    if (!client?.status) return [];
+
+    try {
+      const statusList = client.status();
+      if (!Array.isArray(statusList)) return [];
+
+      const statusMap = new Map();
+      for (const statusItem of statusList) {
+        const selfName = textOf(statusItem?.selfName);
+        if (!selfName) continue;
+
+        const last = statusMap.get(selfName);
+        statusMap.set(selfName, {
+          selfName,
+          open: Boolean(statusItem?.open) || Boolean(last?.open)
+        });
+      }
+
+      return [...statusMap.values()];
+    } catch {
+      return [];
+    }
+  }
+
+  namesForRoute(client) {
+    const names = this.namesOf(client);
+    if (names.length) return names;
+    return this.statusOf(client).map((item) => item.selfName);
+  }
+
   connectedNames() {
+    const statusList = [
+      ...this.statusOf(this.reverseClient),
+      ...this.statusOf(this.forwardClient)
+    ];
+
+    const onlineList = statusList
+      .filter((item) => item.open)
+      .map((item) => item.selfName);
+
+    if (statusList.length) return [...new Set(onlineList)].sort();
+
     return [...new Set([
       ...this.namesOf(this.reverseClient),
       ...this.namesOf(this.forwardClient)
@@ -453,7 +495,7 @@ class McBridge {
 
   clientQueue(serverName) {
     const base = [this.reverseClient, this.forwardClient].filter(Boolean);
-    const hit = base.filter((client) => this.namesOf(client).includes(serverName));
+    const hit = base.filter((client) => this.namesForRoute(client).includes(serverName));
     return [...hit, ...base.filter((client) => !hit.includes(client))];
   }
 

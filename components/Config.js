@@ -1,3 +1,3 @@
-import ConfigService from './config/service.js';
+﻿import ConfigService from './config/service.js'
 
-export default ConfigService;
+export default ConfigService

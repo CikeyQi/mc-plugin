@@ -1,40 +1,19 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import Init from './model/init.js';
-import { pluginRoot } from './model/path.js';
+import { Version } from './components/index.js'
+import Index from './tools/index.js'
 
 if (!global.segment) {
-  global.segment = (await import("oicq")).segment;
+  global.segment = (await import('oicq')).segment
 }
-
-let ret = [];
 
 logger.info(logger.yellow("- 正在载入 MC-PLUGIN"));
 
-const appsDir = path.join(pluginRoot, 'apps');
-const files = fs
-  .readdirSync(appsDir)
-  .filter((file) => file.endsWith('.js'));
+export * from './apps/index.js'
 
-files.forEach((file) => {
-  ret.push(import(`./apps/${file}`))
-})
+logger.info(logger.green(`- MC-PLUGIN ${Version.version} 载入成功`));
+logger.info(logger.magenta('- 欢迎加入新组织【貓娘樂園🍥🏳️‍⚧️】（群号 707331865）'));
 
-ret = await Promise.allSettled(ret);
-
-let apps = {};
-for (let i in files) {
-  let name = files[i].replace('.js', '');
-
-  if (ret[i].status !== 'fulfilled') {
-    logger.error(`载入插件错误：${logger.red(name)}`);
-    logger.error(ret[i].reason);
-    continue;
-  }
-  apps[name] = ret[i].value[Object.keys(ret[i].value)[0]];
-}
-
-logger.info(logger.green("- MC-PLUGIN 载入成功"));
-logger.info(logger.magenta(`- 欢迎加入新组织【貓娘樂園🍥🏳️‍⚧️】（群号 707331865）`));
-
-export { apps };
+setTimeout(() => {
+  Index.init().catch((err) => {
+    logger?.error?.(`[MC-PLUGIN] 初始化失败: ${err?.message || err}`)
+  })
+}, 1000)

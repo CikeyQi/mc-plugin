@@ -1,5 +1,5 @@
 import Version from './Version.js'
-import { pluginRoot } from '../model/path.js'
+import { pluginRoot } from '../models/path.js'
 import fs from 'fs'
 import path from 'path'
 

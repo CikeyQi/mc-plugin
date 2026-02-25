@@ -1,29 +1,31 @@
-import fs from 'fs'
+﻿import fs from 'node:fs'
+import path from 'node:path'
+import { pluginRoot } from '../models/path.js'
 
-let packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
-
-const getLine = function (line) {
-  line = line.replace(/(^\s*\*|\r)/g, '')
-  line = line.replace(/\s*`([^`]+`)/g, '<span class="cmd">$1')
-  line = line.replace(/`\s*/g, '</span>')
-  line = line.replace(/\s*\*\*([^\*]+\*\*)/g, '<span class="strong">$1')
-  line = line.replace(/\*\*\s*/g, '</span>')
-  line = line.replace(/ⁿᵉʷ/g, '<span class="new"></span>')
-  return line
+const readJson = (filePath) => {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+  } catch {
+    return {}
+  }
 }
 
-const yunzaiVersion = packageJson.version
-const currentVersion = packageJson.version
-const isMiao = packageJson.name === 'miao-yunzai'
-const isTrss = Array.isArray(Bot.uin) ? true : false
+let yunzaiPackage = readJson('package.json')
+let pluginPackage = readJson(path.join(pluginRoot, 'package.json'))
+
+const yunzaiVersion = yunzaiPackage.version || ''
+const currentVersion = pluginPackage.version || ''
+const runtimeName = yunzaiPackage.name || ''
+const isMiao = runtimeName === 'miao-yunzai'
+const isTrss = Array.isArray(globalThis.Bot?.uin)
 
 let Version = {
   isMiao,
   isTrss,
-  get version() {
+  get version () {
     return currentVersion
   },
-  get yunzai() {
+  get yunzai () {
     return yunzaiVersion
   }
 }
